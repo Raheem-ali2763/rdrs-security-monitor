@@ -1,0 +1,45 @@
+app:
+  name: "RDRS"
+  version: "0.1.0"
+  environment: "development"
+
+monitoring:
+  paths:
+    - "./data/sandbox"
+  recursive: true
+  entropy_sample_bytes: 65536
+
+detection:
+  entropy:
+    threshold: 7.5
+    sample_bytes: 65536
+
+  file_activity:
+    burst_window_seconds: 60
+    modified_files_threshold: 50
+    rename_threshold: 20
+
+  process:
+    cpu_threshold_percent: 80
+
+scoring:
+  weights:
+    rapid_file_modification: 40
+    mass_rename: 30
+    high_entropy: 25
+    cpu_spike: 15
+    unknown_process: 10
+
+  levels:
+    normal_max: 40
+    warning_max: 70
+    critical_max: 100
+
+database:
+  url: "sqlite:///./data/rdrs.db"
+
+logging:
+  level: "INFO"
+  directory: "./logs"
+  rotation: "10 MB"
+  retention: "7 days"
