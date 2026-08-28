@@ -4,6 +4,7 @@ from fastapi import FastAPI
 
 from app.api.routes.events import router as events_router
 from app.api.routes.incidents import router as incidents_router
+from app.api.routes.reports import router as reports_router
 from app.api.routes.service import router as service_router
 from app.detectors.service import RDRSService
 from app.web.dashboard import render_dashboard
@@ -28,6 +29,7 @@ app = FastAPI(
 
 app.include_router(events_router)
 app.include_router(incidents_router)
+app.include_router(reports_router)
 app.include_router(service_router)
 
 
