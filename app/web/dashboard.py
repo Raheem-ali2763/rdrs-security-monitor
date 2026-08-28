@@ -196,20 +196,14 @@ h1{margin:6px 0;font-size:30px}
 
 
 <section class="card panel" style="margin-top:20px">
-<div class="panel-header">
-    <span class="panel-title">System Settings</span>
-    <span class="panel-action">CONFIGURATION</span>
-</div>
+
 <div id="settings_secondary" class="events">
     <div class="empty">Loading settings...</div>
 </div>
 </section>
 
 <section class="card panel" style="margin-top:20px">
-<div class="panel-header">
-    <span class="panel-title">Active Incidents</span>
-    <span class="panel-action">LIVE</span>
-</div>
+
 <div id="incidents_secondary" class="events">
     <div class="empty">Loading incidents...</div>
 </div>
@@ -396,7 +390,7 @@ async function loadDashboard() {
 
     if (!activeIncidents.length) {
         incidentContainer.innerHTML =
-            '<div class="empty">No active incidents.</div>';
+            '';
     } else {
         incidentContainer.innerHTML = activeIncidents.map(incident => `
             <div class="event-row">
