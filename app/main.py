@@ -4,6 +4,7 @@ from fastapi import FastAPI
 
 from app.api.routes.events import router as events_router
 from app.api.routes.incidents import router as incidents_router
+from app.api.routes.response import router as response_router
 from app.api.routes.reports import router as reports_router
 from app.api.routes.settings import router as settings_router
 from app.api.routes.service import router as service_router
@@ -30,6 +31,7 @@ app = FastAPI(
 
 app.include_router(events_router)
 app.include_router(incidents_router)
+app.include_router(response_router)
 app.include_router(reports_router)
 app.include_router(settings_router)
 app.include_router(service_router)
