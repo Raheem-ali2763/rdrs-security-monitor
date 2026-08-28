@@ -3,6 +3,7 @@ from pathlib import Path
 
 from app.detectors.base import FileEvent
 from app.detectors.engine import DetectionEngine, DetectionResult
+from app.detectors.incident_callback import persist_detection
 
 
 class DetectionPipeline:
@@ -14,7 +15,7 @@ class DetectionPipeline:
         callback: Callable[[FileEvent, DetectionResult], None] | None = None,
     ) -> None:
         self.engine = engine or DetectionEngine()
-        self.callback = callback
+        self.callback = callback or persist_detection
 
     def process(self, event: FileEvent) -> DetectionResult | None:
         """Process a filesystem event through the detection engine."""

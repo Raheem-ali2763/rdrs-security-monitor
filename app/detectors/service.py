@@ -1,6 +1,7 @@
 from app.detectors.base import FileEvent
 from app.detectors.file_monitor import FileMonitor
 from app.detectors.pipeline import DetectionPipeline
+from app.detectors.incident_callback import persist_detection
 
 
 class RDRSService:
@@ -20,6 +21,8 @@ class RDRSService:
 
     @staticmethod
     def _handle_detection(event: FileEvent, result) -> None:
+        persist_detection(event, result)
+
         print(
             f"[RDRS] {event.event_type.upper():<7} "
             f"{event.path} | "
