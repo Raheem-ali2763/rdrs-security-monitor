@@ -39,24 +39,42 @@ class RDRSService:
             )
 
             if result.suspicious:
-                incident = Incident(
-                    incident_id=f"INC-{event.path.stat().st_mtime_ns}",
-                    severity="high",
-                    threat_score=min(100.0, result.entropy * 12.5),
-                    summary=(
-                        f"Suspicious filesystem activity detected: "
+                existing = (
+                    session.query(Incident)
+                    .filter(
+                        Incident.status == "open",
+                        Incident.summary.contains(str(event.path)),
+                    )
+                    .first()
+                )
+
+                if existing is None:
+                    next_id = session.query(Incident).count() + 1
+
+                    incident = Incident(
+                        incident_id=f"INC-{next_id:04d}",
+                        severity="critical",
+                        threat_score=min(100.0, result.entropy * 10.0),
+                        summary=(
+                            f"Suspicious activity detected: "
+                            f"{event.path}"
+                        ),
+                    )
+
+                    session.add(incident)
+                    session.commit()
+
+                    print(
+                        f"[RDRS] INCIDENT CREATED | "
+                        f"{incident.incident_id} | "
+                        f"score={incident.threat_score:.1f}"
+                    )
+                else:
+                    print(
+                        f"[RDRS] INCIDENT EXISTS | "
+                        f"{existing.incident_id} | "
                         f"{event.path}"
-                    ),
-                )
-
-                session.add(incident)
-                session.commit()
-
-                print(
-                    f"[RDRS] INCIDENT CREATED | "
-                    f"{incident.incident_id} | "
-                    f"score={incident.threat_score:.1f}"
-                )
+                    )
 
             print(
                 f"[RDRS] {event.event_type.upper():<7} "
