@@ -220,124 +220,17 @@ h1{margin:6px 0;font-size:30px}
 </div>
 
 <script>
-async function resolveIncident(id){
-    try{
-        const response = await fetch(`/api/incidents/${id}`, {
-            method: "PATCH",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                status: "resolved"
-            })
-        });
-
-        if(!response.ok) throw new Error("Unable to resolve incident");
-
-        await loadDashboard();
-    }catch(error){
-        console.error(error);
-    }
-}
-
-
-async function loadReport(){
-    try{
-        const response = await fetch("/api/reports/summary");
-
-        if(!response.ok) throw new Error("Report unavailable");
-
-        const report = await response.json();
-
-        document.getElementById("report").innerHTML = `
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:18px">
-                <div class="card" style="padding:14px">
-                    <div class="metric-label">TOTAL EVENTS</div>
-                    <div class="metric-value" style="font-size:22px">${report.total_events}</div>
-                </div>
-                <div class="card" style="padding:14px">
-                    <div class="metric-label">SUSPICIOUS</div>
-                    <div class="metric-value" style="font-size:22px">${report.suspicious_events}</div>
-                </div>
-                <div class="card" style="padding:14px">
-                    <div class="metric-label">INCIDENTS</div>
-                    <div class="metric-value" style="font-size:22px">${report.total_incidents}</div>
-                </div>
-                <div class="card" style="padding:14px">
-                    <div class="metric-label">RESOLVED</div>
-                    <div class="metric-value" style="font-size:22px">${report.resolved_incidents}</div>
-                </div>
-            </div>
-        `;
-    }catch(error){
-        document.getElementById("report").innerHTML =
-            '<div class="empty">Unable to load report.</div>';
-    }
-}
-
-
-async function loadSettings(){
-    try{
-        const response = await fetch("/api/settings");
-
-        if(!response.ok) throw new Error("Settings unavailable");
-
-        const settings = await response.json();
-
-        document.getElementById("settings").innerHTML = `
-            <div style="padding:18px">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-                    <span class="metric-label">MONITORING ENGINE</span>
-                    <button
-                        onclick="toggleMonitoring(${!settings.monitoring_enabled})"
-                        style="padding:7px 11px;border:1px solid #28553f;border-radius:7px;background:#10261d;color:#69d89c;cursor:pointer;font-size:10px">
-                        ${settings.monitoring_enabled ? "ENABLED" : "DISABLED"}
-                    </button>
-                </div>
-
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-                    <div>
-                        <div class="metric-label">MONITORED PATH</div>
-                        <div style="margin-top:7px;color:#dce4f2;font-size:13px">
-                            ${settings.monitored_path}
-                        </div>
-                    </div>
-
-                    <div>
-                        <div class="metric-label">ENTROPY THRESHOLD</div>
-                        <div style="margin-top:7px;color:#dce4f2;font-size:13px">
-                            ${settings.entropy_threshold}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    }catch(error){
-        document.getElementById("settings").innerHTML =
-            '<div class="empty">Unable to load settings.</div>';
-    }
-}
-
-async function toggleMonitoring(enabled){
-    await fetch("/api/settings", {
-        method: "PATCH",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({
-            monitoring_enabled: enabled
-        })
-    });
-
-    loadSettings();
-}
-
-async function loadDashboard(){
-    try{
+async function loadDashboard() {
+    try {
         const [statsRes, eventsRes, incidentsRes] = await Promise.all([
             fetch("/api/stats"),
             fetch("/api/events?limit=6"),
             fetch("/api/incidents")
         ]);
 
-        if(!statsRes.ok || !eventsRes.ok || !incidentsRes.ok)
+        if (!statsRes.ok || !eventsRes.ok || !incidentsRes.ok) {
             throw new Error("API unavailable");
+        }
 
         const stats = await statsRes.json();
         const events = await eventsRes.json();
@@ -346,52 +239,81 @@ async function loadDashboard(){
         const total = stats.total_events || 0;
         const suspicious = stats.suspicious_events || 0;
         const recent = stats.recent_events || 0;
-        const openIncidents = incidents.filter(i => i.status === "open").length;
-
-        const openIncidents = incidents.filter(
-            incident => incident.status === "open"
-        );
 
         const maxThreatScore = incidents.length
             ? Math.max(...incidents.map(i => Number(i.threat_score) || 0))
             : 0;
 
-        const score = Math.round(
-            Math.max(
-                maxThreatScore,
-                Math.min(100, suspicious * 20 + Math.min(total, 20))
-            )
+        const score = Math.min(
+            100,
+            Math.round(Math.max(maxThreatScore, suspicious * 20 + Math.min(total, 20)))
         );
 
-        document.getElementById("threat-score").textContent = score;
-        document.getElementById("event-count").textContent = total;
-        document.getElementById("suspicious-count").textContent =
-            openIncidents.length;
+        const threatScore = document.getElementById("threat-score");
+        const eventCount = document.getElementById("event-count");
+        const suspiciousCount = document.getElementById("suspicious-count");
+        const recentCount = document.getElementById("recent-count");
 
-        document.getElementById("recent-count").textContent = recent;
-        const incidentCount = document.getElementById("incident-count");
-        if (incidentCount) incidentCount.textContent = openIncidents;
+        if (threatScore) threatScore.textContent = score;
+        if (eventCount) eventCount.textContent = total;
+        if (suspiciousCount) suspiciousCount.textContent = suspicious;
+        if (recentCount) recentCount.textContent = recent;
 
-        document.getElementById("threat-label").textContent =
-            score >= 70 ? "Elevated activity" :
-            score >= 40 ? "Moderate activity" : "Low activity";
+        const threatLabel = document.getElementById("threat-label");
+        if (threatLabel) {
+            threatLabel.textContent =
+                score >= 70 ? "Elevated activity" :
+                score >= 40 ? "Moderate activity" :
+                "Low activity";
+        }
+
+        const eventContainer = document.getElementById("events");
+
+        if (eventContainer) {
+            if (!events.length) {
+                eventContainer.innerHTML =
+                    '<div class="empty">No events recorded yet.</div>';
+            } else {
+                eventContainer.innerHTML = events.map(event => {
+                    const severity = event.suspicious
+                        ? "critical"
+                        : event.event_type === "modify"
+                            ? "warning"
+                            : "normal";
+
+                    const label = event.suspicious
+                        ? "CRITICAL"
+                        : event.event_type === "modify"
+                            ? "WARNING"
+                            : "NORMAL";
+
+                    const icon = event.suspicious
+                        ? "⚠"
+                        : event.event_type === "modify"
+                            ? "↻"
+                            : "✓";
+
+                    return `
+                    <div class="event">
+                        <div class="event-icon">${icon}</div>
+                        <div class="event-info">
+                            <div class="event-name">${event.event_type}</div>
+                            <div class="event-path">${event.path}</div>
+                        </div>
+                        <span class="severity ${severity}">${label}</span>
+                    </div>`;
+                }).join("");
+            }
+        }
 
         const incidentContainer = document.getElementById("incidents");
 
-        if(!incidents.length){
-            incidentContainer.innerHTML =
-                '<div class="empty">No incidents recorded.</div>';
-        }else{
-            incidentContainer.innerHTML = incidents
-                .filter(i => i.status === "open")
-                .map(incident => {
-                    const severity =
-                        incident.severity === "critical" ? "critical" :
-                        incident.severity === "high" ? "critical" :
-                        incident.severity === "medium" ? "warning" :
-                        "normal";
-
-                    return `
+        if (incidentContainer) {
+            if (!incidents.length) {
+                incidentContainer.innerHTML =
+                    '<div class="empty">No incidents recorded.</div>';
+            } else {
+                incidentContainer.innerHTML = incidents.map(incident => `
                     <div class="event">
                         <div class="event-icon">⚠</div>
                         <div class="event-info">
@@ -399,83 +321,37 @@ async function loadDashboard(){
                                 ${incident.incident_id} — ${incident.summary}
                             </div>
                             <div class="event-path">
-                                Threat score: ${incident.threat_score}
+                                Threat score: ${Number(incident.threat_score).toFixed(1)}
                             </div>
                         </div>
-                        <span class="severity ${severity}">
-                            ${incident.severity.toUpperCase()}
+                        <span class="severity critical">
+                            ${String(incident.severity).toUpperCase()}
                         </span>
-                    </div>`;
-                }).join("");
-        }
-
-        const incidentContainer = document.getElementById("incidents");
-
-        const activeIncidents = incidents.filter(
-            incident => incident.status === "open"
-        );
-
-        if(!activeIncidents.length){
-            incidentContainer.innerHTML =
-                '<div class="empty">No active incidents.</div>';
-        }else{
-            incidentContainer.innerHTML = activeIncidents.slice(0, 6).map(incident => `
-                <div class="event">
-                    <div class="event-icon">⚠</div>
-                    <div class="event-info">
-                        <div class="event-name">
-                            ${incident.incident_id} — ${incident.summary}
-                        </div>
-                        <div class="event-path">
-                            Threat score: ${incident.threat_score}
-                        </div>
                     </div>
-                    <span class="severity critical">
-                        ${incident.severity.toUpperCase()}
-                    </span>
-                </div>
-            `).join("");
+                `).join("");
+            }
         }
 
-        const container = document.getElementById("events");
+    } catch (error) {
+        console.error("RDRS dashboard error:", error);
 
-        if(!events.length){
-            container.innerHTML = '<div class="empty">No events recorded yet.</div>';
-        }else{
-            container.innerHTML = events.map(event => {
-                const severity = event.suspicious ? "critical" :
-                    event.event_type === "file_modified" ? "warning" : "normal";
+        const events = document.getElementById("events");
+        const incidents = document.getElementById("incidents");
 
-                const label = event.suspicious ? "CRITICAL" :
-                    event.event_type === "file_modified" ? "WARNING" : "NORMAL";
-
-                const icon = event.suspicious ? "⚠" :
-                    event.event_type === "file_modified" ? "↻" : "✓";
-
-                return `
-                <div class="event">
-                    <div class="event-icon">${icon}</div>
-                    <div class="event-info">
-                        <div class="event-name">${event.event_type}</div>
-                        <div class="event-path">${event.path}</div>
-                    </div>
-                    <span class="severity ${severity}">${label}</span>
-                </div>`;
-            }).join("");
+        if (events) {
+            events.innerHTML =
+                '<div class="empty">Unable to load events.</div>';
         }
 
-    }catch(error){
-        document.getElementById("events").innerHTML =
-            '<div class="empty">Unable to load events.</div>';
+        if (incidents) {
+            incidents.innerHTML =
+                '<div class="empty">Unable to load incidents.</div>';
+        }
     }
 }
 
 loadDashboard();
-loadReport();
-loadSettings();
-
 setInterval(loadDashboard, 5000);
-setInterval(loadReport, 10000);
 </script>
 
 </body>
