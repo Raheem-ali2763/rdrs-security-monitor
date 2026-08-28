@@ -220,6 +220,85 @@ h1{margin:6px 0;font-size:30px}
 </div>
 
 <script>
+
+async function loadSettings() {
+    const el = document.getElementById("settings");
+    if (!el) return;
+
+    try {
+        const response = await fetch("/api/settings");
+        if (!response.ok) throw new Error("settings request failed");
+
+        const settings = await response.json();
+
+        el.innerHTML = `
+            <div class="settings-row">
+                <div>
+                    <div class="metric-label">MONITORING</div>
+                    <div class="metric-value" style="font-size:20px">
+                        ${settings.monitoring_enabled ? "ENABLED" : "DISABLED"}
+                    </div>
+                </div>
+                <div>
+                    <div class="metric-label">MONITORED PATH</div>
+                    <div>${settings.monitored_path}</div>
+                </div>
+                <div>
+                    <div class="metric-label">ENTROPY THRESHOLD</div>
+                    <div>${settings.entropy_threshold}</div>
+                </div>
+            </div>
+        `;
+    } catch (error) {
+        console.error("Settings:", error);
+        el.innerHTML = '<div class="empty">Unable to load settings.</div>';
+    }
+}
+
+async function loadReport() {
+    const el = document.getElementById("report");
+    if (!el) return;
+
+    try {
+        const response = await fetch("/api/reports/summary");
+        if (!response.ok) throw new Error("report request failed");
+
+        const report = await response.json();
+
+        el.innerHTML = `
+            <div class="settings-row">
+                <div>
+                    <div class="metric-label">TOTAL EVENTS</div>
+                    <div class="metric-value" style="font-size:22px">
+                        ${report.total_events ?? 0}
+                    </div>
+                </div>
+                <div>
+                    <div class="metric-label">SUSPICIOUS EVENTS</div>
+                    <div class="metric-value" style="font-size:22px">
+                        ${report.suspicious_events ?? 0}
+                    </div>
+                </div>
+                <div>
+                    <div class="metric-label">TOTAL INCIDENTS</div>
+                    <div class="metric-value" style="font-size:22px">
+                        ${report.total_incidents ?? 0}
+                    </div>
+                </div>
+                <div>
+                    <div class="metric-label">RESOLVED INCIDENTS</div>
+                    <div class="metric-value" style="font-size:22px">
+                        ${report.resolved_incidents ?? 0}
+                    </div>
+                </div>
+            </div>
+        `;
+    } catch (error) {
+        console.error("Report:", error);
+        el.innerHTML = '<div class="empty">Unable to load report.</div>';
+    }
+}
+
 async function loadDashboard() {
     try {
         const [statsRes, eventsRes, incidentsRes] = await Promise.all([
@@ -351,6 +430,8 @@ async function loadDashboard() {
 }
 
 loadDashboard();
+loadSettings();
+loadReport();
 setInterval(loadDashboard, 5000);
 </script>
 
