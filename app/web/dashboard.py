@@ -174,6 +174,17 @@ h1{margin:6px 0;font-size:30px}
 </section>
 <section class="card panel" style="margin-top:20px">
 <div class="panel-header">
+    <span class="panel-title">Security Report</span>
+    <span class="panel-action">LIVE SUMMARY</span>
+</div>
+<div id="report" class="events">
+    <div class="empty">Loading report...</div>
+</div>
+</section>
+
+
+<section class="card panel" style="margin-top:20px">
+<div class="panel-header">
     <span class="panel-title">Active Incidents</span>
     <span class="panel-action">LIVE</span>
 </div>
@@ -202,6 +213,41 @@ async function resolveIncident(id){
         await loadDashboard();
     }catch(error){
         console.error(error);
+    }
+}
+
+
+async function loadReport(){
+    try{
+        const response = await fetch("/api/reports/summary");
+
+        if(!response.ok) throw new Error("Report unavailable");
+
+        const report = await response.json();
+
+        document.getElementById("report").innerHTML = `
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:18px">
+                <div class="card" style="padding:14px">
+                    <div class="metric-label">TOTAL EVENTS</div>
+                    <div class="metric-value" style="font-size:22px">${report.total_events}</div>
+                </div>
+                <div class="card" style="padding:14px">
+                    <div class="metric-label">SUSPICIOUS</div>
+                    <div class="metric-value" style="font-size:22px">${report.suspicious_events}</div>
+                </div>
+                <div class="card" style="padding:14px">
+                    <div class="metric-label">INCIDENTS</div>
+                    <div class="metric-value" style="font-size:22px">${report.total_incidents}</div>
+                </div>
+                <div class="card" style="padding:14px">
+                    <div class="metric-label">RESOLVED</div>
+                    <div class="metric-value" style="font-size:22px">${report.resolved_incidents}</div>
+                </div>
+            </div>
+        `;
+    }catch(error){
+        document.getElementById("report").innerHTML =
+            '<div class="empty">Unable to load report.</div>';
     }
 }
 
@@ -345,7 +391,10 @@ async function loadDashboard(){
 }
 
 loadDashboard();
+loadReport();
+
 setInterval(loadDashboard, 5000);
+setInterval(loadReport, 10000);
 </script>
 
 </body>
