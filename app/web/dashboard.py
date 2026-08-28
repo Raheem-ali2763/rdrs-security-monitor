@@ -389,31 +389,30 @@ async function loadDashboard() {
         }
 
         const incidentContainer = document.getElementById("incidents");
-        const incidentContainer2 = document.getElementById("incidents_secondary");
 
-        if (incidentContainer) {
-            if (!incidents.length) {
-                incidentContainer.innerHTML =
-                    '<div class="empty">No incidents recorded.</div>';
-            } else {
-                incidentContainer.innerHTML = incidents.map(incident => `
-                    <div class="event">
-                        <div class="event-icon">⚠</div>
-                        <div class="event-info">
-                            <div class="event-name">
-                                ${incident.incident_id} — ${incident.summary}
-                            </div>
-                            <div class="event-path">
-                                Threat score: ${Number(incident.threat_score).toFixed(1)}
-                            </div>
-                        </div>
-                        <span class="severity critical">
-                            ${String(incident.severity).toUpperCase()}
-                        </span>
+    const activeIncidents = incidents.filter(
+        incident => incident.status === "open"
+    );
+
+    if (!activeIncidents.length) {
+        incidentContainer.innerHTML =
+            '<div class="empty">No active incidents.</div>';
+    } else {
+        incidentContainer.innerHTML = activeIncidents.map(incident => `
+            <div class="event-row">
+                <div>
+                    <strong>${incident.incident_id}</strong>
+                    <span> — ${incident.summary}</span>
+                    <div class="muted">
+                        Threat score: ${Number(incident.threat_score || 0).toFixed(1)}
                     </div>
-                `).join("");
-            }
-        }
+                </div>
+                <span class="severity ${String(incident.severity || "").toLowerCase()}">
+                    ${String(incident.severity || "").toUpperCase()}
+                </span>
+            </div>
+        `).join("");
+    }
 
     } catch (error) {
         console.error("RDRS dashboard error:", error);
