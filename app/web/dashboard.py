@@ -172,6 +172,17 @@ h1{margin:6px 0;font-size:30px}
 </div>
 
 </section>
+<section class="card panel" style="margin-top:20px">
+<div class="panel-header">
+    <span class="panel-title">Active Incidents</span>
+    <span class="panel-action">LIVE</span>
+</div>
+<div id="incidents" class="events">
+    <div class="empty">Loading incidents...</div>
+</div>
+</section>
+
+
 </main>
 </div>
 
@@ -252,6 +263,34 @@ async function loadDashboard(){
                         </span>
                     </div>`;
                 }).join("");
+        }
+
+        const incidentContainer = document.getElementById("incidents");
+
+        const activeIncidents = incidents.filter(
+            incident => incident.status === "open"
+        );
+
+        if(!activeIncidents.length){
+            incidentContainer.innerHTML =
+                '<div class="empty">No active incidents.</div>';
+        }else{
+            incidentContainer.innerHTML = activeIncidents.slice(0, 6).map(incident => `
+                <div class="event">
+                    <div class="event-icon">⚠</div>
+                    <div class="event-info">
+                        <div class="event-name">
+                            ${incident.incident_id} — ${incident.summary}
+                        </div>
+                        <div class="event-path">
+                            Threat score: ${incident.threat_score}
+                        </div>
+                    </div>
+                    <span class="severity critical">
+                        ${incident.severity.toUpperCase()}
+                    </span>
+                </div>
+            `).join("");
         }
 
         const container = document.getElementById("events");
