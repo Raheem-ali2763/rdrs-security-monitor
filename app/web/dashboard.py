@@ -342,10 +342,12 @@ async function loadDashboard(){
         const stats = await statsRes.json();
         const events = await eventsRes.json();
         const incidents = await incidentsRes.json();
+        const incidents = await incidentsRes.json();
 
         const total = stats.total_events || 0;
         const suspicious = stats.suspicious_events || 0;
         const recent = stats.recent_events || 0;
+        const openIncidents = incidents.filter(i => i.status === "open").length;
 
         const openIncidents = incidents.filter(
             incident => incident.status === "open"
@@ -368,6 +370,8 @@ async function loadDashboard(){
             openIncidents.length;
 
         document.getElementById("recent-count").textContent = recent;
+        const incidentCount = document.getElementById("incident-count");
+        if (incidentCount) incidentCount.textContent = openIncidents;
 
         document.getElementById("threat-label").textContent =
             score >= 70 ? "Elevated activity" :

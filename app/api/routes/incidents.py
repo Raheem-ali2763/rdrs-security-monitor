@@ -302,3 +302,59 @@ def get_incident_full(incident_id: int) -> dict:
         }
     finally:
         session.close()
+
+
+@router.patch("/incidents/{incident_id}/status")
+def update_incident_status(
+    incident_id: int,
+    status: str,
+) -> dict:
+    allowed = {"open", "investigating", "resolved", "closed"}
+
+    if status not in allowed:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid status. Use one of: {', '.join(sorted(allowed))}",
+        )
+
+    session = get_session()
+    try:
+        incident = session.get(Incident, incident_id)
+
+        if incident is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Incident not found",
+            )
+
+        incident.status = status
+
+        if status in {"resolved", "closed"}:
+            incident.ended_at = datetime.utcnow()
+        else:
+            incident.ended_at = None
+
+        session.commit()
+        session.refresh(incident)
+
+        return incident_dict(incident)
+    finally:
+        session.close()
+
+
+@router.delete("/incidents/{incident_id}", status_code=204)
+def delete_incident(incident_id: int):
+    session = get_session()
+    try:
+        incident = session.get(Incident, incident_id)
+
+        if incident is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Incident not found",
+            )
+
+        session.delete(incident)
+        session.commit()
+    finally:
+        session.close()
