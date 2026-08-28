@@ -17,6 +17,15 @@ class IncidentCreate(BaseModel):
     summary: str = ""
 
 
+
+
+class IncidentUpdate(BaseModel):
+    status: str | None = None
+    severity: str | None = None
+    threat_score: float | None = None
+    summary: str | None = None
+
+
 class EvidenceCreate(BaseModel):
     path: str
     evidence_type: str = "file"
@@ -89,6 +98,55 @@ def create_incident(payload: IncidentCreate) -> dict:
         session.refresh(incident)
 
         return incident_dict(incident)
+    finally:
+        session.close()
+
+
+@router.patch("/incidents/{incident_id}", status_code=200)
+def update_incident(
+    incident_id: int,
+    payload: IncidentUpdate,
+) -> dict:
+    session = get_session()
+    try:
+        incident = session.get(Incident, incident_id)
+
+        if incident is None:
+            raise HTTPException(status_code=404, detail="Incident not found")
+
+        if payload.status is not None:
+            incident.status = payload.status
+            if payload.status in {"closed", "resolved"}:
+                incident.ended_at = datetime.utcnow()
+
+        if payload.severity is not None:
+            incident.severity = payload.severity
+
+        if payload.threat_score is not None:
+            incident.threat_score = payload.threat_score
+
+        if payload.summary is not None:
+            incident.summary = payload.summary
+
+        session.commit()
+        session.refresh(incident)
+
+        return incident_dict(incident)
+    finally:
+        session.close()
+
+
+@router.delete("/incidents/{incident_id}", status_code=204)
+def delete_incident(incident_id: int) -> None:
+    session = get_session()
+    try:
+        incident = session.get(Incident, incident_id)
+
+        if incident is None:
+            raise HTTPException(status_code=404, detail="Incident not found")
+
+        session.delete(incident)
+        session.commit()
     finally:
         session.close()
 
