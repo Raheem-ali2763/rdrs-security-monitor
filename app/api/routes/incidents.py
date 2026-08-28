@@ -221,3 +221,26 @@ def delete_incident(incident_id: int):
         session.commit()
     finally:
         session.close()
+
+
+@router.get("/incidents/{incident_id}/full")
+def get_incident_full(incident_id: int) -> dict:
+    session = get_session()
+    try:
+        incident = session.get(Incident, incident_id)
+
+        if incident is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Incident not found",
+            )
+
+        return {
+            **incident_dict(incident),
+            "evidence": [
+                evidence_dict(evidence)
+                for evidence in incident.evidence
+            ],
+        }
+    finally:
+        session.close()
