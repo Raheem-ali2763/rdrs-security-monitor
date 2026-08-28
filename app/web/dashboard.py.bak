@@ -161,16 +161,6 @@ h1{margin:6px 0;font-size:30px}
 </div>
 </div>
 
-<div class="card panel" style="margin-top:20px">
-<div class="panel-header">
-<span class="panel-title">Active Incidents</span>
-<span class="panel-action">LIVE</span>
-</div>
-<div id="incidents" class="events">
-<div class="empty">Loading incidents...</div>
-</div>
-</div>
-
 </section>
 </main>
 </div>
@@ -178,81 +168,30 @@ h1{margin:6px 0;font-size:30px}
 <script>
 async function loadDashboard(){
     try{
-        const [statsRes, eventsRes, incidentsRes] = await Promise.all([
+        const [statsRes, eventsRes] = await Promise.all([
             fetch("/api/stats"),
-            fetch("/api/events?limit=6"),
-            fetch("/api/incidents")
+            fetch("/api/events?limit=6")
         ]);
 
-        if(!statsRes.ok || !eventsRes.ok || !incidentsRes.ok)
-            throw new Error("API unavailable");
+        if(!statsRes.ok || !eventsRes.ok) throw new Error("API unavailable");
 
         const stats = await statsRes.json();
         const events = await eventsRes.json();
-        const incidents = await incidentsRes.json();
 
         const total = stats.total_events || 0;
         const suspicious = stats.suspicious_events || 0;
         const recent = stats.recent_events || 0;
 
-        const openIncidents = incidents.filter(
-            incident => incident.status === "open"
-        );
-
-        const maxThreatScore = incidents.length
-            ? Math.max(...incidents.map(i => Number(i.threat_score) || 0))
-            : 0;
-
-        const score = Math.round(
-            Math.max(
-                maxThreatScore,
-                Math.min(100, suspicious * 20 + Math.min(total, 20))
-            )
-        );
+        const score = Math.min(100, suspicious * 20 + Math.min(total, 20));
 
         document.getElementById("threat-score").textContent = score;
         document.getElementById("event-count").textContent = total;
-        document.getElementById("suspicious-count").textContent =
-            openIncidents.length;
-
+        document.getElementById("suspicious-count").textContent = suspicious;
         document.getElementById("recent-count").textContent = recent;
 
         document.getElementById("threat-label").textContent =
             score >= 70 ? "Elevated activity" :
             score >= 40 ? "Moderate activity" : "Low activity";
-
-        const incidentContainer = document.getElementById("incidents");
-
-        if(!incidents.length){
-            incidentContainer.innerHTML =
-                '<div class="empty">No incidents recorded.</div>';
-        }else{
-            incidentContainer.innerHTML = incidents
-                .filter(i => i.status === "open")
-                .map(incident => {
-                    const severity =
-                        incident.severity === "critical" ? "critical" :
-                        incident.severity === "high" ? "critical" :
-                        incident.severity === "medium" ? "warning" :
-                        "normal";
-
-                    return `
-                    <div class="event">
-                        <div class="event-icon">⚠</div>
-                        <div class="event-info">
-                            <div class="event-name">
-                                ${incident.incident_id} — ${incident.summary}
-                            </div>
-                            <div class="event-path">
-                                Threat score: ${incident.threat_score}
-                            </div>
-                        </div>
-                        <span class="severity ${severity}">
-                            ${incident.severity.toUpperCase()}
-                        </span>
-                    </div>`;
-                }).join("");
-        }
 
         const container = document.getElementById("events");
 
