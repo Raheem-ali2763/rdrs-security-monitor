@@ -1,4 +1,5 @@
 from app.database.repository import EventRepository
+from app.database.incident_models import Incident
 from app.database.session import get_session
 from app.detectors.base import FileEvent
 from app.detectors.file_monitor import FileMonitor
@@ -36,6 +37,26 @@ class RDRSService:
                 entropy=result.entropy,
                 suspicious=result.suspicious,
             )
+
+            if result.suspicious:
+                incident = Incident(
+                    incident_id=f"INC-{event.path.stat().st_mtime_ns}",
+                    severity="high",
+                    threat_score=min(100.0, result.entropy * 12.5),
+                    summary=(
+                        f"Suspicious filesystem activity detected: "
+                        f"{event.path}"
+                    ),
+                )
+
+                session.add(incident)
+                session.commit()
+
+                print(
+                    f"[RDRS] INCIDENT CREATED | "
+                    f"{incident.incident_id} | "
+                    f"score={incident.threat_score:.1f}"
+                )
 
             print(
                 f"[RDRS] {event.event_type.upper():<7} "
