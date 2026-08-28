@@ -197,13 +197,6 @@ h1{margin:6px 0;font-size:30px}
 
 <section class="card panel" style="margin-top:20px">
 
-<div id="settings_secondary" class="events">
-    <div class="empty">Loading settings...</div>
-</div>
-</section>
-
-<section class="card panel" style="margin-top:20px">
-
 <div id="incidents_secondary" class="events">
     <div class="empty">Loading incidents...</div>
 </div>
