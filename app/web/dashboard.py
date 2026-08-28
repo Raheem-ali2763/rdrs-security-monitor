@@ -342,7 +342,6 @@ async function loadDashboard(){
         const stats = await statsRes.json();
         const events = await eventsRes.json();
         const incidents = await incidentsRes.json();
-        const incidents = await incidentsRes.json();
 
         const total = stats.total_events || 0;
         const suspicious = stats.suspicious_events || 0;
