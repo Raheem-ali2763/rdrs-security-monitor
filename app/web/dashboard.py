@@ -187,6 +187,24 @@ h1{margin:6px 0;font-size:30px}
 </div>
 
 <script>
+async function resolveIncident(id){
+    try{
+        const response = await fetch(`/api/incidents/${id}`, {
+            method: "PATCH",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                status: "resolved"
+            })
+        });
+
+        if(!response.ok) throw new Error("Unable to resolve incident");
+
+        await loadDashboard();
+    }catch(error){
+        console.error(error);
+    }
+}
+
 async function loadDashboard(){
     try{
         const [statsRes, eventsRes, incidentsRes] = await Promise.all([
