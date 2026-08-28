@@ -200,7 +200,7 @@ h1{margin:6px 0;font-size:30px}
     <span class="panel-title">System Settings</span>
     <span class="panel-action">CONFIGURATION</span>
 </div>
-<div id="settings" class="events">
+<div id="settings_secondary" class="events">
     <div class="empty">Loading settings...</div>
 </div>
 </section>
@@ -210,7 +210,7 @@ h1{margin:6px 0;font-size:30px}
     <span class="panel-title">Active Incidents</span>
     <span class="panel-action">LIVE</span>
 </div>
-<div id="incidents" class="events">
+<div id="incidents_secondary" class="events">
     <div class="empty">Loading incidents...</div>
 </div>
 </section>
@@ -223,6 +223,7 @@ h1{margin:6px 0;font-size:30px}
 
 async function loadSettings() {
     const el = document.getElementById("settings");
+    const el2 = document.getElementById("settings_secondary");
     if (!el) return;
 
     try {
@@ -231,7 +232,7 @@ async function loadSettings() {
 
         const settings = await response.json();
 
-        el.innerHTML = `
+        const html = `
             <div class="settings-row">
                 <div>
                     <div class="metric-label">MONITORING</div>
@@ -249,6 +250,8 @@ async function loadSettings() {
                 </div>
             </div>
         `;
+        el.innerHTML = html;
+        if (el2) el2.innerHTML = html;
     } catch (error) {
         console.error("Settings:", error);
         el.innerHTML = '<div class="empty">Unable to load settings.</div>';
@@ -386,6 +389,7 @@ async function loadDashboard() {
         }
 
         const incidentContainer = document.getElementById("incidents");
+        const incidentContainer2 = document.getElementById("incidents_secondary");
 
         if (incidentContainer) {
             if (!incidents.length) {
