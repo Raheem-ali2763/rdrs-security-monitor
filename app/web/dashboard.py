@@ -388,7 +388,7 @@ async function loadDashboard() {
             }
         }
 
-        const incidentContainers = document.querySelectorAll('[id="incidents"]');
+        const incidentContainer = document.getElementById("incidents");
         const incidentContainer2 = document.getElementById("incidents_secondary");
 
         if (incidentContainer) {
@@ -396,7 +396,7 @@ async function loadDashboard() {
                 incidentContainer.innerHTML =
                     '<div class="empty">No incidents recorded.</div>';
             } else {
-                incidentContainers.forEach(el => el.innerHTML = incidents.map(incident => `
+                incidentContainer.innerHTML = incidents.map(incident => `
                     <div class="event">
                         <div class="event-icon">⚠</div>
                         <div class="event-info">
