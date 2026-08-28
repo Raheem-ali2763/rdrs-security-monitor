@@ -172,6 +172,17 @@ h1{margin:6px 0;font-size:30px}
 </div>
 
 </section>
+
+<section class="card panel" style="margin-top:20px">
+<div class="panel-header">
+    <span class="panel-title">System Settings</span>
+    <span class="panel-action">CONFIGURATION</span>
+</div>
+<div id="settings" class="events">
+    <div class="empty">Loading settings...</div>
+</div>
+</section>
+
 <section class="card panel" style="margin-top:20px">
 <div class="panel-header">
     <span class="panel-title">Security Report</span>
@@ -182,6 +193,17 @@ h1{margin:6px 0;font-size:30px}
 </div>
 </section>
 
+
+
+<section class="card panel" style="margin-top:20px">
+<div class="panel-header">
+    <span class="panel-title">System Settings</span>
+    <span class="panel-action">CONFIGURATION</span>
+</div>
+<div id="settings" class="events">
+    <div class="empty">Loading settings...</div>
+</div>
+</section>
 
 <section class="card panel" style="margin-top:20px">
 <div class="panel-header">
@@ -249,6 +271,61 @@ async function loadReport(){
         document.getElementById("report").innerHTML =
             '<div class="empty">Unable to load report.</div>';
     }
+}
+
+
+async function loadSettings(){
+    try{
+        const response = await fetch("/api/settings");
+
+        if(!response.ok) throw new Error("Settings unavailable");
+
+        const settings = await response.json();
+
+        document.getElementById("settings").innerHTML = `
+            <div style="padding:18px">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+                    <span class="metric-label">MONITORING ENGINE</span>
+                    <button
+                        onclick="toggleMonitoring(${!settings.monitoring_enabled})"
+                        style="padding:7px 11px;border:1px solid #28553f;border-radius:7px;background:#10261d;color:#69d89c;cursor:pointer;font-size:10px">
+                        ${settings.monitoring_enabled ? "ENABLED" : "DISABLED"}
+                    </button>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                    <div>
+                        <div class="metric-label">MONITORED PATH</div>
+                        <div style="margin-top:7px;color:#dce4f2;font-size:13px">
+                            ${settings.monitored_path}
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="metric-label">ENTROPY THRESHOLD</div>
+                        <div style="margin-top:7px;color:#dce4f2;font-size:13px">
+                            ${settings.entropy_threshold}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }catch(error){
+        document.getElementById("settings").innerHTML =
+            '<div class="empty">Unable to load settings.</div>';
+    }
+}
+
+async function toggleMonitoring(enabled){
+    await fetch("/api/settings", {
+        method: "PATCH",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+            monitoring_enabled: enabled
+        })
+    });
+
+    loadSettings();
 }
 
 async function loadDashboard(){
@@ -392,6 +469,7 @@ async function loadDashboard(){
 
 loadDashboard();
 loadReport();
+loadSettings();
 
 setInterval(loadDashboard, 5000);
 setInterval(loadReport, 10000);
