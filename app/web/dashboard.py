@@ -3213,11 +3213,13 @@ async function downloadIncidentReport(incidentRef, format) {
         const link = document.createElement("a");
         link.href = url;
         link.download = `incident-${incidentRef}.${format}`;
+        link.style.display = "none";
+
         document.body.appendChild(link);
         link.click();
         link.remove();
 
-        URL.revokeObjectURL(url);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch (error) {
         console.error("Report download:", error);
         alert("Unable to generate incident report.");
