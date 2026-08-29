@@ -30,3 +30,7 @@ logs/*
 .DS_Store
 
 
+
+# Generated reports
+data/reports/*
+!data/reports/.gitkeep
