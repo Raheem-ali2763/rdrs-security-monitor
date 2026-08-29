@@ -20,7 +20,7 @@ body{margin:0;min-height:100vh;background:#080d19;color:#e8edf7;font-family:Inte
 .brand-name{font-size:19px;font-weight:700}
 .brand-subtitle{margin-top:3px;color:#71809b;font-size:11px;letter-spacing:.08em}
 .nav-title{padding:12px;color:#56647d;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
-.nav-item{display:flex;align-items:center;gap:12px;margin:4px 0;padding:12px;border-radius:10px;color:#8491a8;font-size:14px}
+.nav-item{display:flex;text-decoration:none;cursor:pointer;align-items:center;gap:12px;margin:4px 0;padding:12px;border-radius:10px;color:#8491a8;font-size:14px}
 .nav-item.active{background:#16233a;color:#f1f5ff}
 .nav-icon{width:20px;text-align:center}
 .sidebar-bottom{margin-top:40px;padding:14px;border:1px solid #1d293e;border-radius:12px;background:#0e1627}
@@ -75,14 +75,14 @@ h1{margin:6px 0;font-size:30px}
 </div>
 
 <div class="nav-title">Monitor</div>
-<div class="nav-item active"><span class="nav-icon">⌂</span>Overview</div>
-<div class="nav-item"><span class="nav-icon">◉</span>Events</div>
-<div class="nav-item"><span class="nav-icon">⚠</span>Incidents</div>
-<div class="nav-item"><span class="nav-icon">◈</span>Evidence</div>
+<a class="nav-item active" href="#overview"><span class="nav-icon">⌂</span>Overview</a>
+<a class="nav-item" href="#events-section"> <span class="nav-icon">◉</span>Events</a>
+<a class="nav-item" href="#incidents" onclick="document.getElementById('incidents').scrollIntoView({behavior:'smooth',block:'start'}); return false;"><span class="nav-icon">⚠</span>Incidents</a>
+<a class="nav-item" href="#evidence-section" onclick="document.getElementById('evidence-section').scrollIntoView({behavior:'smooth',block:'start'}); return false;"><span class="nav-icon">◈</span>Evidence</a>
 
 <div class="nav-title">Manage</div>
-<div class="nav-item"><span class="nav-icon">▣</span>Reports</div>
-<div class="nav-item"><span class="nav-icon">⚙</span>Settings</div>
+<a class="nav-item" href="#report-section"><span class="nav-icon">▣</span>Reports</a>
+<a class="nav-item" href="#settings-section"><span class="nav-icon">⚙</span>Settings</a>
 
 <div class="sidebar-bottom">
 <div class="system-row"><span>Detection engine</span><span class="online">ONLINE</span></div>
@@ -91,7 +91,7 @@ h1{margin:6px 0;font-size:30px}
 </div>
 </aside>
 
-<main class="main">
+<main class="main" id="overview">
 
 <header class="topbar">
 <div>
@@ -151,10 +151,11 @@ h1{margin:6px 0;font-size:30px}
 </div>
 </div>
 
-<div class="card panel">
+<div class="card panel" id="events-section">
 <div class="panel-header">
 <span class="panel-title">Recent Events</span>
 <span class="panel-action">LIVE</span>
+</div>
 </div>
 <div id="events" class="events">
 <div class="empty">Loading events...</div>
@@ -173,9 +174,19 @@ h1{margin:6px 0;font-size:30px}
 
 </section>
 
-<section class="card panel" style="margin-top:20px">
+<section id="evidence-section" class="card panel" style="margin-top:20px">
 <div class="panel-header">
-    <span class="panel-title">System Settings</span>
+<span class="panel-title">Evidence</span>
+<span class="panel-action">INCIDENT EVIDENCE</span>
+</div>
+<div id="evidence" class="events">
+<div class="empty">Select an incident to view its evidence.</div>
+</div>
+</section>
+
+<section class="card panel" id="settings-section" id="settings-section" style="margin-top:20px">
+<div class="panel-header">
+<span class="panel-title">System Settings</span>
     <span class="panel-action">CONFIGURATION</span>
 </div>
 <div id="settings" class="events">
@@ -183,13 +194,26 @@ h1{margin:6px 0;font-size:30px}
 </div>
 </section>
 
-<section class="card panel" style="margin-top:20px">
+<section class="card panel" id="report-section" style="margin-top:20px">
 <div class="panel-header">
-    <span class="panel-title">Security Report</span>
+<span class="panel-title">Security Report</span>
     <span class="panel-action">LIVE SUMMARY</span>
 </div>
 <div id="report" class="events">
     <div class="empty">Loading report...</div>
+</div>
+
+<div style="padding:0 20px 18px;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="nav-item"
+            style="border:1px solid #1d273a;background:#111b2d;cursor:pointer"
+            onclick="downloadIncidentReport('latest','json')">
+        JSON Report
+    </button>
+    <button class="nav-item"
+            style="border:1px solid #1d273a;background:#111b2d;cursor:pointer"
+            onclick="downloadIncidentReport('latest','csv')">
+        CSV Report
+    </button>
 </div>
 </section>
 
@@ -303,6 +327,56 @@ async function loadReport() {
 }
 
 
+
+async function loadEvidence(id) {
+    const el = document.getElementById("evidence");
+
+    if (!el) return;
+
+    el.innerHTML = '<div class="empty">Loading evidence...</div>';
+
+    try {
+        const response = await fetch(`/api/incidents/${id}/evidence`);
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const evidence = await response.json();
+
+        if (!evidence.length) {
+            el.innerHTML =
+                '<div class="empty">No evidence recorded for this incident.</div>';
+            return;
+        }
+
+        el.innerHTML = evidence.map(item => `
+            <div class="event">
+                <div class="event-icon">◈</div>
+                <div class="event-info">
+                    <div class="event-name">
+                        ${item.evidence_type || item.type || "Evidence"}
+                    </div>
+                    <div class="event-path">
+                        ${item.description || item.path || item.value || "Evidence recorded"}
+                    </div>
+                </div>
+                <span class="severity normal">EVIDENCE</span>
+            </div>
+        `).join("");
+
+        document.getElementById("evidence-section")?.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+    } catch (error) {
+        console.error("Evidence:", error);
+        el.innerHTML =
+            '<div class="empty">Unable to load evidence.</div>';
+    }
+}
+
 async function incidentAction(id, action) {
     try {
         const response = await fetch(`/api/incidents/${id}/${action}`, {
@@ -314,6 +388,7 @@ async function incidentAction(id, action) {
         }
 
         await loadDashboard();
+loadEvidence();
         await loadReport();
     } catch (error) {
         console.error(`Incident ${action}:`, error);
@@ -356,6 +431,147 @@ async function serviceAction(action) {
     } catch (error) {
         console.error(`Service ${action}:`, error);
         alert(`Unable to ${action} monitoring service.`);
+    }
+}
+
+
+function goToSection(sectionId) {
+    const section = document.getElementById(sectionId);
+
+    if (!section) {
+        console.error("Section not found:", sectionId);
+        return;
+    }
+
+    section.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+
+async function loadEvidence() {
+    const container = document.getElementById("evidence");
+    if (!container) return;
+
+    try {
+        const incidentsRes = await fetch("/api/incidents");
+
+        if (!incidentsRes.ok) {
+            throw new Error(`Incidents HTTP ${incidentsRes.status}`);
+        }
+
+        const incidents = await incidentsRes.json();
+
+        const active = incidents.filter(
+            incident => incident.status === "open"
+        );
+
+        if (!active.length) {
+            container.innerHTML =
+                '<div class="empty">No active incidents with evidence.</div>';
+            return;
+        }
+
+        let evidenceItems = [];
+
+        for (const incident of active) {
+            try {
+                const response = await fetch(
+                    `/api/incidents/${incident.id}/evidence`
+                );
+
+                if (!response.ok) continue;
+
+                const data = await response.json();
+
+                if (Array.isArray(data)) {
+                    for (const item of data) {
+                        evidenceItems.push({
+                            incident: incident,
+                            evidence: item
+                        });
+                    }
+                }
+            } catch (err) {
+                console.error(
+                    "Evidence load failed for incident",
+                    incident.id,
+                    err
+                );
+            }
+        }
+
+        if (!evidenceItems.length) {
+            container.innerHTML =
+                '<div class="empty">No evidence found for active incidents.</div>';
+            return;
+        }
+
+        container.innerHTML = evidenceItems.map(item => {
+            const incident = item.incident;
+            const evidence = item.evidence;
+
+            const values = Object.entries(evidence)
+                .filter(([key, value]) =>
+                    value !== null &&
+                    value !== undefined &&
+                    key !== "id" &&
+                    key !== "incident_id"
+                )
+                .map(([key, value]) => `
+                    <div style="margin-top:4px">
+                        <span class="muted">${key.replaceAll("_", " ")}:</span>
+                        ${String(value)}
+                    </div>
+                `)
+                .join("");
+
+            return `
+                <div class="event-row" style="padding:14px 20px;border-bottom:1px solid #172133">
+                    <div>
+                        <strong>${incident.incident_id}</strong>
+                        <div class="muted">
+                            ${incident.summary || "Incident evidence"}
+                        </div>
+                        ${values}
+                    </div>
+                </div>
+            `;
+        }).join("");
+
+    } catch (error) {
+        console.error("Evidence:", error);
+        container.innerHTML =
+            '<div class="empty">Unable to load evidence.</div>';
+    }
+}
+
+
+async function downloadIncidentReport(incidentRef, format) {
+    try {
+        const response = await fetch(
+            `/api/reports/${encodeURIComponent(incidentRef)}/${format}`
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `incident-${incidentRef}.${format}`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error("Report download:", error);
+        alert("Unable to generate incident report.");
     }
 }
 
@@ -457,16 +673,31 @@ async function loadDashboard() {
     } else {
         incidentContainer.innerHTML = activeIncidents.map(incident => `
             <div class="event-row">
-                <div>
+                <div style="flex:1">
                     <strong>${incident.incident_id}</strong>
                     <span> — ${incident.summary}</span>
                     <div class="muted">
                         Threat score: ${Number(incident.threat_score || 0).toFixed(1)}
                     </div>
                 </div>
-                <span class="severity ${String(incident.severity || "").toLowerCase()}">
-                    ${String(incident.severity || "").toUpperCase()}
-                </span>
+
+                <div style="display:flex;align-items:center;gap:8px">
+                    <span class="severity ${String(incident.severity || "").toLowerCase()}">
+                        ${String(incident.severity || "").toUpperCase()}
+                    </span>
+
+                    <button
+                        onclick="incidentAction(${incident.id}, 'resolve')"
+                        style="padding:5px 9px;border:1px solid #28533f;border-radius:6px;background:#10251b;color:#69d99d;cursor:pointer">
+                        Resolve
+                    </button>
+
+                    <button
+                        onclick="deleteIncident(${incident.id})"
+                        style="padding:5px 9px;border:1px solid #5a3038;border-radius:6px;background:#24151a;color:#e88a98;cursor:pointer">
+                        Delete
+                    </button>
+                </div>
             </div>
         `).join("");
     }
@@ -493,6 +724,7 @@ loadDashboard();
 loadSettings();
 loadReport();
 setInterval(loadDashboard, 5000);
+setInterval(loadEvidence, 5000);
 </script>
 
 </body>
