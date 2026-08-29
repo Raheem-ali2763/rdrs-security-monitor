@@ -82,7 +82,7 @@ h1{margin:6px 0;font-size:30px}
 
 <div class="nav-title">Manage</div>
 <a class="nav-item" href="#report-section"><span class="nav-icon">▣</span>Reports</a>
-<a class="nav-item" href="#settings-section"><span class="nav-icon">⚙</span>Settings</a>
+<a class="nav-item" href="#settings-section" onclick="document.getElementById('settings-section').scrollIntoView({behavior:'smooth',block:'start'}); return false;"><span class="nav-icon">⚙</span>Settings</a>
 
 <div class="sidebar-bottom">
 <div class="system-row"><span>Detection engine</span><span class="online">ONLINE</span></div>
@@ -184,7 +184,7 @@ h1{margin:6px 0;font-size:30px}
 </div>
 </section>
 
-<section class="card panel" id="settings-section" id="settings-section" style="margin-top:20px">
+<section class="card panel" id="settings-section" style="margin-top:20px">
 <div class="panel-header">
 <span class="panel-title">System Settings</span>
     <span class="panel-action">CONFIGURATION</span>
