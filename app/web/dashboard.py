@@ -1342,7 +1342,6 @@ button:not([disabled]):hover{
 <span class="panel-title">Recent Events</span>
 <span class="panel-action">LIVE</span>
 </div>
-</div>
 <div id="events" class="events">
 <div class="empty">Loading events...</div>
 </div>
