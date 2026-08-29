@@ -708,6 +708,131 @@ button:not([disabled]):hover{
 }
 </style>
 
+
+<style id="rdrs-settings-premium">
+/* ===== PREMIUM SYSTEM SETTINGS ===== */
+
+#settings-section {
+    position: relative !important;
+    overflow: hidden !important;
+    margin-top: 28px !important;
+    border: 1px solid rgba(74,158,255,.15) !important;
+    border-radius: 18px !important;
+    background:
+        radial-gradient(circle at 88% 18%, rgba(0,210,180,.075), transparent 27%),
+        radial-gradient(circle at 12% 90%, rgba(80,130,255,.07), transparent 30%),
+        linear-gradient(145deg, rgba(15,24,42,.98), rgba(7,14,27,.98)) !important;
+    box-shadow:
+        0 18px 55px rgba(0,0,0,.28),
+        inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+
+#settings-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(
+            115deg,
+            transparent 0%,
+            transparent 42%,
+            rgba(0,220,190,.045) 50%,
+            transparent 58%,
+            transparent 100%
+        );
+    background-size: 240% 240%;
+    animation: settingsSweep 9s linear infinite;
+}
+
+#settings-section::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 7%;
+    right: 7%;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(72,160,255,.7),
+        rgba(0,230,190,.65),
+        transparent
+    );
+    animation: settingsPulse 4s ease-in-out infinite;
+}
+
+#settings-section > * {
+    position: relative;
+    z-index: 2;
+}
+
+#settings-section .panel-title {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: .08em !important;
+}
+
+#settings-section button {
+    border-radius: 9px !important;
+    padding: 9px 15px !important;
+    font-weight: 600 !important;
+    letter-spacing: .02em !important;
+    transition:
+        transform .22s ease,
+        box-shadow .22s ease,
+        border-color .22s ease,
+        background .22s ease !important;
+}
+
+#settings-section button:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 22px rgba(0,0,0,.25) !important;
+}
+
+#settings-section button[onclick*="stop"] {
+    border: 1px solid rgba(255,75,95,.32) !important;
+    background: rgba(170,35,55,.12) !important;
+    color: #ff8b98 !important;
+}
+
+#settings-section button[onclick*="stop"]:hover {
+    border-color: rgba(255,75,95,.65) !important;
+    background: rgba(190,40,60,.2) !important;
+    box-shadow: 0 0 24px rgba(255,65,85,.12) !important;
+}
+
+#settings-section button[onclick*="start"] {
+    border: 1px solid rgba(0,225,180,.3) !important;
+    background: rgba(0,180,145,.11) !important;
+    color: #63e6c7 !important;
+}
+
+#settings-section button[onclick*="start"]:hover {
+    border-color: rgba(0,240,190,.65) !important;
+    background: rgba(0,190,155,.18) !important;
+    box-shadow: 0 0 24px rgba(0,220,180,.12) !important;
+}
+
+@keyframes settingsSweep {
+    0%   { background-position: 240% 0%; }
+    100% { background-position: -240% 100%; }
+}
+
+@keyframes settingsPulse {
+    0%,100% { opacity: .25; transform: scaleX(.45); }
+    50%     { opacity: .9; transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #settings-section::before,
+    #settings-section::after {
+        animation: none;
+    }
+}
+</style>
+
 </head>
 
 <body>
