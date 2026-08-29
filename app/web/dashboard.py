@@ -1174,6 +1174,118 @@ body{
 }
 </style>
 
+
+<style id="rdrs-report-premium">
+/* ===== PREMIUM SECURITY REPORT ===== */
+
+#reports-section,
+#report-section,
+section:has(.report-title) {
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+/* Locate the report panel by its visible title */
+
+#threat-score {
+    position: relative !important;
+    overflow: hidden !important;
+    margin-top: 28px !important;
+    border: 1px solid rgba(120,150,255,.16) !important;
+    border-radius: 18px !important;
+    background:
+        radial-gradient(circle at 90% 15%, rgba(95,120,255,.10), transparent 28%),
+        radial-gradient(circle at 10% 90%, rgba(0,220,190,.055), transparent 25%),
+        linear-gradient(145deg, rgba(15,24,42,.99), rgba(7,14,28,.99)) !important;
+    box-shadow:
+        0 20px 65px rgba(0,0,0,.30),
+        inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+
+#threat-score::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(
+            105deg,
+            transparent 35%,
+            rgba(90,150,255,.055) 48%,
+            rgba(0,230,190,.07) 50%,
+            rgba(90,150,255,.055) 52%,
+            transparent 65%
+        );
+    background-size: 220% 100%;
+    animation: reportScan 8s linear infinite;
+}
+
+#threat-score::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 8%;
+    right: 8%;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(90,150,255,.75),
+        rgba(0,230,190,.65),
+        transparent
+    );
+    animation: reportGlow 4s ease-in-out infinite;
+}
+
+#threat-score > * {
+    position: relative;
+    z-index: 2;
+}
+
+#threat-score button {
+    border-radius: 10px !important;
+    border: 1px solid rgba(90,150,255,.18) !important;
+    background: linear-gradient(
+        135deg,
+        rgba(55,100,180,.13),
+        rgba(20,35,65,.55)
+    ) !important;
+    color: #b9d1f5 !important;
+    padding: 9px 16px !important;
+    font-weight: 600 !important;
+    transition:
+        transform .22s ease,
+        border-color .22s ease,
+        box-shadow .22s ease,
+        background .22s ease !important;
+}
+
+#threat-score button:hover {
+    transform: translateY(-3px) !important;
+    border-color: rgba(80,170,255,.55) !important;
+    background: rgba(55,110,210,.18) !important;
+    box-shadow:
+        0 10px 28px rgba(0,0,0,.28),
+        0 0 22px rgba(60,140,255,.10) !important;
+}
+
+@keyframes reportScan {
+    0%   { background-position: 220% 0; }
+    100% { background-position: -220% 0; }
+}
+
+@keyframes reportGlow {
+    0%,100% { opacity:.25; transform:scaleX(.4); }
+    50% { opacity:1; transform:scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #threat-score::before,
+    #threat-score::after {
+        animation:none;
+    }
+}
+
 </head>
 
 <body>
