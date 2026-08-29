@@ -210,6 +210,64 @@ def generate_json_report(incident_ref: str):
         session.close()
 
 
+def _report_to_csv(report: dict) -> str:
+    incident = report["incident"]
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    writer.writerow(["RDRS INCIDENT REPORT"])
+    writer.writerow(["Incident ID", incident["incident_id"]])
+    writer.writerow(["Severity", incident["severity"]])
+    writer.writerow(["Threat Score", incident["threat_score"]])
+    writer.writerow(["Status", incident["status"]])
+    writer.writerow(["Summary", incident["summary"]])
+    writer.writerow([])
+
+    writer.writerow(["TIMELINE"])
+    writer.writerow(["Type", "Timestamp", "Description"])
+
+    for item in report["timeline"]:
+        writer.writerow([
+            item.get("type"),
+            item.get("timestamp"),
+            item.get("description"),
+        ])
+
+    writer.writerow([])
+    writer.writerow(["AFFECTED FILES"])
+
+    for path in report["affected_files"]:
+        writer.writerow([path])
+
+    writer.writerow([])
+    writer.writerow(["SUSPECT PROCESSES"])
+
+    for process in report["suspect_processes"]:
+        writer.writerow([process])
+
+    writer.writerow([])
+    writer.writerow(["EVIDENCE"])
+    writer.writerow(["ID", "Path", "Type", "SHA256", "Collected At"])
+
+    for item in report["evidence"]:
+        writer.writerow([
+            item.get("id"),
+            item.get("path"),
+            item.get("evidence_type"),
+            item.get("sha256"),
+            item.get("collected_at"),
+        ])
+
+    writer.writerow([])
+    writer.writerow(["RECOMMENDATIONS"])
+
+    for recommendation in report["recommendations"]:
+        writer.writerow([recommendation])
+
+    return output.getvalue()
+
+
 @router.get("/reports/{incident_ref}/csv")
 def generate_csv_report(incident_ref: str):
     session = get_session()
@@ -225,69 +283,12 @@ def generate_csv_report(incident_ref: str):
 
         report = _build_report(session, incident)
 
-        output = io.StringIO()
-        writer = csv.writer(output)
-
-        writer.writerow(["RDRS INCIDENT REPORT"])
-        writer.writerow(["Incident ID", incident.incident_id])
-        writer.writerow(["Severity", incident.severity])
-        writer.writerow(["Threat Score", incident.threat_score])
-        writer.writerow(["Status", incident.status])
-        writer.writerow(["Summary", incident.summary])
-        writer.writerow([])
-
-        writer.writerow(["TIMELINE"])
-        writer.writerow(["Type", "Timestamp", "Description"])
-
-        for item in report["timeline"]:
-            writer.writerow(
-                [
-                    item["type"],
-                    item["timestamp"],
-                    item["description"],
-                ]
-            )
-
-        writer.writerow([])
-        writer.writerow(["AFFECTED FILES"])
-
-        for path in report["affected_files"]:
-            writer.writerow([path])
-
-        writer.writerow([])
-        writer.writerow(["SUSPECT PROCESSES"])
-
-        for process in report["suspect_processes"]:
-            writer.writerow([process])
-
-        writer.writerow([])
-        writer.writerow(["EVIDENCE"])
-        writer.writerow(
-            ["ID", "Path", "Type", "SHA256", "Collected At"]
-        )
-
-        for item in report["evidence"]:
-            writer.writerow(
-                [
-                    item.get("id"),
-                    item.get("path"),
-                    item.get("evidence_type"),
-                    item.get("sha256"),
-                    item.get("collected_at"),
-                ]
-            )
-
-        writer.writerow([])
-        writer.writerow(["RECOMMENDATIONS"])
-
-        for recommendation in report["recommendations"]:
-            writer.writerow([recommendation])
 
         filename = f"{incident.incident_id}.csv"
         path = REPORT_DIR / filename
 
         path.write_text(
-            output.getvalue(),
+            _report_to_csv(report),
             encoding="utf-8",
         )
 
