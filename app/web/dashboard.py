@@ -1462,6 +1462,254 @@ h1{
     }
 }
 
+
+/* ===== PREMIUM SECURITY REPORT ===== */
+
+#report-section{
+    position:relative;
+    overflow:hidden;
+    margin-top:28px !important;
+    padding:0 !important;
+    border:1px solid rgba(100,145,210,.16);
+    background:
+        radial-gradient(circle at 85% 15%,rgba(80,130,220,.10),transparent 30%),
+        linear-gradient(145deg,rgba(15,25,43,.98),rgba(9,16,29,.98));
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.22),
+        inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+#report-section::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:1px;
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(91,146,235,.55),
+        transparent
+    );
+}
+
+#report-section .panel-header{
+    padding:22px 24px;
+    margin:0;
+    border-bottom:1px solid rgba(100,125,165,.10);
+}
+
+#report-section .panel-title{
+    font-size:14px;
+    letter-spacing:.12em;
+}
+
+#report-section .panel-action{
+    padding:7px 11px;
+    border-radius:999px;
+    border:1px solid rgba(83,150,255,.18);
+    background:rgba(52,105,190,.08);
+    color:#7eaeef;
+}
+
+#report{
+    padding:24px;
+}
+
+.report-grid{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:16px;
+}
+
+.report-stat{
+    position:relative;
+    min-height:126px;
+    padding:20px;
+    border-radius:14px;
+    border:1px solid rgba(105,135,180,.13);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(25,39,64,.72),
+            rgba(12,21,36,.76)
+        );
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.025),
+        0 10px 28px rgba(0,0,0,.12);
+    transition:
+        transform .22s ease,
+        border-color .22s ease,
+        box-shadow .22s ease;
+}
+
+.report-stat:hover{
+    transform:translateY(-3px);
+    border-color:rgba(90,150,245,.30);
+    box-shadow:
+        0 14px 35px rgba(0,0,0,.20),
+        0 0 24px rgba(64,125,220,.07);
+}
+
+.report-stat::after{
+    content:"";
+    position:absolute;
+    left:20px;
+    right:20px;
+    bottom:0;
+    height:2px;
+    border-radius:2px;
+    background:linear-gradient(
+        90deg,
+        rgba(79,142,232,.0),
+        rgba(79,142,232,.45),
+        rgba(79,142,232,.0)
+    );
+    opacity:.45;
+}
+
+.report-stat.warning::after{
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(226,167,79,.65),
+        transparent
+    );
+}
+
+.report-stat.danger::after{
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(226,82,104,.72),
+        transparent
+    );
+}
+
+.report-stat.success::after{
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(83,202,142,.65),
+        transparent
+    );
+}
+
+.report-stat-label{
+    color:#71809a;
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    margin-bottom:13px;
+}
+
+.report-stat-value{
+    font-size:32px;
+    line-height:1;
+    font-weight:700;
+    letter-spacing:-.04em;
+    color:#edf4ff;
+}
+
+.report-stat-sub{
+    margin-top:12px;
+    color:#53627a;
+    font-size:11px;
+}
+
+.report-actions{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    padding:0 24px 24px;
+    margin-top:2px;
+}
+
+.report-actions-copy{
+    color:#596981;
+    font-size:11px;
+    letter-spacing:.03em;
+}
+
+.report-buttons{
+    display:flex;
+    gap:10px;
+}
+
+.report-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    min-width:120px;
+    justify-content:center;
+    padding:11px 16px;
+    border-radius:10px;
+    border:1px solid rgba(91,142,220,.20);
+    background:linear-gradient(
+        145deg,
+        rgba(32,55,88,.80),
+        rgba(17,31,52,.90)
+    );
+    color:#b9cdef;
+    font:inherit;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.05em;
+    cursor:pointer;
+    transition:all .2s ease;
+}
+
+.report-btn:hover{
+    transform:translateY(-2px);
+    border-color:rgba(91,154,245,.45);
+    color:#e7f0ff;
+    box-shadow:0 8px 24px rgba(52,111,205,.16);
+}
+
+.report-btn.primary{
+    border-color:rgba(73,141,241,.28);
+    background:linear-gradient(
+        145deg,
+        rgba(39,82,142,.92),
+        rgba(25,54,94,.95)
+    );
+    color:#dbeaff;
+}
+
+.report-btn .btn-icon{
+    font-size:14px;
+    opacity:.8;
+}
+
+@media(max-width:900px){
+    .report-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+}
+
+@media(max-width:560px){
+    .report-grid{
+        grid-template-columns:1fr;
+    }
+
+    .report-actions{
+        align-items:stretch;
+        flex-direction:column;
+    }
+
+    .report-buttons{
+        width:100%;
+    }
+
+    .report-btn{
+        flex:1;
+    }
+}
+
+
 /* EVENTS */
 
 .events{
@@ -2326,21 +2574,54 @@ button:not([disabled]):hover{
 <span class="panel-title">Security Report</span>
     <span class="panel-action">LIVE SUMMARY</span>
 </div>
-<div id="report" class="events">
-    <div class="empty">Loading report...</div>
+<div id="report">
+    <div class="report-grid">
+
+        <div class="report-stat">
+            <div class="report-stat-label">Total Events</div>
+            <div id="report-total-events" class="report-stat-value">--</div>
+            <div class="report-stat-sub">All recorded activity</div>
+        </div>
+
+        <div class="report-stat warning">
+            <div class="report-stat-label">Suspicious Events</div>
+            <div id="report-suspicious-events" class="report-stat-value">--</div>
+            <div class="report-stat-sub">Requires investigation</div>
+        </div>
+
+        <div class="report-stat danger">
+            <div class="report-stat-label">Total Incidents</div>
+            <div id="report-total-incidents" class="report-stat-value">--</div>
+            <div class="report-stat-sub">Detected security incidents</div>
+        </div>
+
+        <div class="report-stat success">
+            <div class="report-stat-label">Resolved Incidents</div>
+            <div id="report-resolved-incidents" class="report-stat-value">--</div>
+            <div class="report-stat-sub">Successfully closed</div>
+        </div>
+
+    </div>
 </div>
 
-<div style="padding:0 20px 18px;display:flex;gap:8px;flex-wrap:wrap">
-    <button class="nav-item"
-            style="border:1px solid #1d273a;background:#111b2d;cursor:pointer"
-            onclick="downloadIncidentReport('latest','json')">
-        JSON Report
-    </button>
-    <button class="nav-item"
-            style="border:1px solid #1d273a;background:#111b2d;cursor:pointer"
-            onclick="downloadIncidentReport('latest','csv')">
-        CSV Report
-    </button>
+<div class="report-actions">
+    <div class="report-actions-copy">
+        Export the current security intelligence snapshot
+    </div>
+
+    <div class="report-buttons">
+        <button class="report-btn"
+                onclick="downloadIncidentReport('latest','json')">
+            <span class="btn-icon">↗</span>
+            JSON Report
+        </button>
+
+        <button class="report-btn primary"
+                onclick="downloadIncidentReport('latest','csv')">
+            <span class="btn-icon">↓</span>
+            CSV Report
+        </button>
+    </div>
 </div>
 </section>
 
@@ -2419,34 +2700,34 @@ async function loadReport() {
 
         const report = await response.json();
 
-        el.innerHTML = `
-            <div class="settings-row">
-                <div>
-                    <div class="metric-label">TOTAL EVENTS</div>
-                    <div class="metric-value" style="font-size:22px">
-                        ${report.total_events ?? 0}
-                    </div>
-                </div>
-                <div>
-                    <div class="metric-label">SUSPICIOUS EVENTS</div>
-                    <div class="metric-value" style="font-size:22px">
-                        ${report.suspicious_events ?? 0}
-                    </div>
-                </div>
-                <div>
-                    <div class="metric-label">TOTAL INCIDENTS</div>
-                    <div class="metric-value" style="font-size:22px">
-                        ${report.total_incidents ?? 0}
-                    </div>
-                </div>
-                <div>
-                    <div class="metric-label">RESOLVED INCIDENTS</div>
-                    <div class="metric-value" style="font-size:22px">
-                        ${report.resolved_incidents ?? 0}
-                    </div>
-                </div>
-            </div>
-        `;
+        const totalEvents =
+            report.total_events ?? 0;
+
+        const suspiciousEvents =
+            report.suspicious_events ?? 0;
+
+        const totalIncidents =
+            report.total_incidents ?? 0;
+
+        const resolvedIncidents =
+            report.resolved_incidents ?? 0;
+
+        const totalEl =
+            document.getElementById("report-total-events");
+
+        const suspiciousEl =
+            document.getElementById("report-suspicious-events");
+
+        const incidentsEl =
+            document.getElementById("report-total-incidents");
+
+        const resolvedEl =
+            document.getElementById("report-resolved-incidents");
+
+        if (totalEl) totalEl.textContent = totalEvents;
+        if (suspiciousEl) suspiciousEl.textContent = suspiciousEvents;
+        if (incidentsEl) incidentsEl.textContent = totalIncidents;
+        if (resolvedEl) resolvedEl.textContent = resolvedIncidents;
     } catch (error) {
         console.error("Report:", error);
         el.innerHTML = '<div class="empty">Unable to load report.</div>';
