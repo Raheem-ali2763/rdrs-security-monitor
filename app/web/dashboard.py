@@ -2768,13 +2768,13 @@ button:not([disabled]):hover{
 
     <div class="report-buttons">
         <button class="report-btn"
-                onclick="downloadIncidentReport('latest','json')">
+                onclick="downloadLatestReport('json')">
             <span class="btn-icon">↗</span>
             JSON Report
         </button>
 
         <button class="report-btn primary"
-                onclick="downloadIncidentReport('latest','csv')">
+                onclick="downloadLatestReport('csv')">
             <span class="btn-icon">↓</span>
             CSV Report
         </button>
@@ -3159,6 +3159,40 @@ async function loadEvidence() {
         console.error("Evidence:", error);
         container.innerHTML =
             '<div class="empty">Unable to load evidence.</div>';
+    }
+}
+
+
+async function downloadLatestReport(format) {
+    try {
+        const response = await fetch("/api/incidents");
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const incidents = await response.json();
+
+        if (!Array.isArray(incidents) || !incidents.length) {
+            alert("No incidents available for report generation.");
+            return;
+        }
+
+        const latest = incidents[0];
+
+        const incidentRef =
+            latest.incident_id ??
+            latest.id;
+
+        if (incidentRef === undefined || incidentRef === null) {
+            throw new Error("Latest incident has no valid ID");
+        }
+
+        await downloadIncidentReport(incidentRef, format);
+
+    } catch (error) {
+        console.error("Latest report:", error);
+        alert("Unable to generate the latest incident report.");
     }
 }
 
