@@ -833,6 +833,269 @@ button:not([disabled]):hover{
 }
 </style>
 
+
+<style id="rdrs-metric-premium">
+/* ===== RDRS PREMIUM METRIC CARDS ===== */
+.metric-card,
+.stat-card,
+.kpi-card {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(120,150,190,.16) !important;
+    border-radius: 16px !important;
+    background:
+        radial-gradient(circle at 90% 0%, rgba(70,130,255,.13), transparent 42%),
+        linear-gradient(145deg, rgba(18,29,52,.96), rgba(9,16,30,.98)) !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.045),
+        0 10px 35px rgba(0,0,0,.20) !important;
+    transition:
+        transform .28s ease,
+        border-color .28s ease,
+        box-shadow .28s ease !important;
+}
+
+.metric-card::before,
+.stat-card::before,
+.kpi-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(
+            115deg,
+            transparent 25%,
+            rgba(255,255,255,.055) 45%,
+            transparent 65%
+        );
+    transform: translateX(-110%);
+    transition: transform .7s ease;
+}
+
+.metric-card:hover,
+.stat-card:hover,
+.kpi-card:hover {
+    transform: translateY(-5px) scale(1.012);
+    border-color: rgba(90,160,255,.38) !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.07),
+        0 16px 45px rgba(0,0,0,.30),
+        0 0 28px rgba(60,130,255,.08) !important;
+}
+
+.metric-card:hover::before,
+.stat-card:hover::before,
+.kpi-card:hover::before {
+    transform: translateX(110%);
+}
+
+.metric-card .value,
+.stat-card .value,
+.kpi-card .value,
+.metric-value,
+.stat-value,
+.kpi-value {
+    font-weight: 700 !important;
+    letter-spacing: -.035em;
+    text-shadow: 0 0 22px rgba(100,160,255,.16);
+}
+
+.metric-card .label,
+.stat-card .label,
+.kpi-card .label {
+    letter-spacing: .10em;
+    text-transform: uppercase;
+    opacity: .62;
+}
+
+.metric-card:first-child,
+.stat-card:first-child,
+.kpi-card:first-child {
+    background:
+        radial-gradient(circle at 90% 0%, rgba(255,80,100,.16), transparent 44%),
+        linear-gradient(145deg, rgba(30,25,43,.98), rgba(12,16,29,.98)) !important;
+}
+
+@keyframes rdrsCardPulse {
+    0%,100% { box-shadow: 0 0 0 rgba(80,150,255,0); }
+    50% { box-shadow: 0 0 24px rgba(80,150,255,.055); }
+}
+
+.metric-card,
+.stat-card,
+.kpi-card {
+    animation: rdrsCardPulse 4s ease-in-out infinite;
+}
+</style>
+
+
+<style id="rdrs-threat-premium">
+/* ===== PREMIUM LIVE THREAT ACTIVITY ===== */
+
+#activity {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 9px;
+    overflow: hidden;
+    perspective: 900px;
+    isolation: isolate;
+    border-radius: 0 0 14px 14px;
+}
+
+/* subtle futuristic grid */
+#activity::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+        linear-gradient(rgba(100,150,220,.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(100,150,220,.035) 1px, transparent 1px);
+    background-size: 42px 42px;
+    mask-image: linear-gradient(to bottom, transparent, black 25%, black 80%, transparent);
+}
+
+/* moving scanner */
+#activity::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    top: 10%;
+    pointer-events: none;
+    z-index: 5;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(80,170,255,.05),
+        rgba(100,190,255,.65),
+        rgba(80,170,255,.05),
+        transparent
+    );
+    box-shadow: 0 0 18px rgba(80,170,255,.35);
+    animation: rdrsScanner 4.5s ease-in-out infinite;
+}
+
+#activity .bar {
+    position: relative;
+    z-index: 2;
+    flex: 1 1 0;
+    min-width: 10px;
+    transform-origin: bottom center;
+    transform: translateZ(0) rotateX(0deg);
+    border-radius: 7px 7px 3px 3px;
+    filter: saturate(1.08);
+    box-shadow:
+        inset 1px 0 rgba(255,255,255,.08),
+        inset -1px 0 rgba(0,0,0,.15),
+        0 -8px 22px rgba(65,140,255,.08);
+    animation:
+        rdrsBarFloat 3.2s ease-in-out infinite,
+        rdrsBarGlow 2.8s ease-in-out infinite;
+    transition:
+        height .8s cubic-bezier(.2,.8,.2,1),
+        transform .3s ease,
+        filter .3s ease;
+}
+
+#activity .bar:nth-child(2n) {
+    animation-delay: -.8s;
+}
+
+#activity .bar:nth-child(3n) {
+    animation-delay: -1.5s;
+}
+
+#activity .bar:nth-child(4n) {
+    animation-delay: -2.1s;
+}
+
+#activity .bar:hover {
+    transform: translateY(-5px) scaleX(1.08) scaleY(1.02);
+    filter: brightness(1.25) saturate(1.2);
+    z-index: 4;
+}
+
+#activity .bar::after {
+    content: "";
+    position: absolute;
+    left: 8%;
+    right: 8%;
+    top: 0;
+    height: 2px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.32);
+    box-shadow: 0 0 12px rgba(120,190,255,.35);
+}
+
+#activity .bar.high {
+    box-shadow:
+        inset 1px 0 rgba(255,255,255,.08),
+        0 -8px 25px rgba(190,80,110,.12);
+}
+
+#activity .bar.peak {
+    box-shadow:
+        inset 1px 0 rgba(255,255,255,.12),
+        0 -10px 35px rgba(240,75,105,.28);
+    animation:
+        rdrsBarFloat 3s ease-in-out infinite,
+        rdrsPeakPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes rdrsScanner {
+    0%   { top: 8%; opacity: 0; }
+    12%  { opacity: 1; }
+    50%  { opacity: .85; }
+    88%  { opacity: 1; }
+    100% { top: 92%; opacity: 0; }
+}
+
+@keyframes rdrsBarFloat {
+    0%,100% {
+        transform: translateY(0) scaleY(1);
+    }
+    50% {
+        transform: translateY(-2px) scaleY(1.015);
+    }
+}
+
+@keyframes rdrsBarGlow {
+    0%,100% {
+        filter: brightness(.98) saturate(1);
+    }
+    50% {
+        filter: brightness(1.08) saturate(1.08);
+    }
+}
+
+@keyframes rdrsPeakPulse {
+    0%,100% {
+        filter: brightness(1) saturate(1);
+        box-shadow:
+            inset 1px 0 rgba(255,255,255,.12),
+            0 -10px 28px rgba(240,75,105,.18);
+    }
+    50% {
+        filter: brightness(1.18) saturate(1.15);
+        box-shadow:
+            inset 1px 0 rgba(255,255,255,.16),
+            0 -10px 42px rgba(240,75,105,.38);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #activity::after,
+    #activity .bar {
+        animation: none !important;
+    }
+}
+</style>
+
 </head>
 
 <body>
@@ -1495,6 +1758,39 @@ loadSettings();
 loadReport();
 setInterval(loadDashboard, 5000);
 setInterval(loadEvidence, 5000);
+</script>
+
+
+<script id="rdrs-threat-live">
+(function () {
+    function startThreatAnimation() {
+        const bars = Array.from(document.querySelectorAll("#activity .bar"));
+        if (!bars.length) return;
+
+        setInterval(() => {
+            bars.forEach((bar, index) => {
+                const peak = bar.classList.contains("peak");
+                const high = bar.classList.contains("high");
+
+                let min = high ? 45 : 18;
+                let max = peak ? 92 : (high ? 78 : 68);
+
+                const wave = Math.sin(Date.now() / 1400 + index * 0.85);
+                const random = Math.random() * 18;
+                let value = min + ((wave + 1) / 2) * (max - min) * .65 + random;
+
+                value = Math.max(min, Math.min(max, value));
+                bar.style.height = value.toFixed(1) + "%";
+            });
+        }, 2600);
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", startThreatAnimation);
+    } else {
+        startThreatAnimation();
+    }
+})();
 </script>
 
 </body>
