@@ -951,6 +951,239 @@ h1{
     pointer-events:none;
 }
 
+
+/* =========================================================
+   PREMIUM FORENSIC EVIDENCE
+   ========================================================= */
+
+#evidence-section{
+    position:relative;
+    overflow:hidden;
+    background:
+        radial-gradient(
+            circle at 92% 5%,
+            rgba(65,139,255,.075),
+            transparent 34%
+        ),
+        radial-gradient(
+            circle at 5% 100%,
+            rgba(72,201,145,.035),
+            transparent 30%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(14,25,45,.99),
+            rgba(7,14,28,.99)
+        );
+}
+
+#evidence-section::before{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    top:0;
+    height:1px;
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(76,141,255,.65),
+            rgba(72,201,145,.35),
+            transparent
+        );
+    opacity:.8;
+}
+
+#evidence-section .panel-header{
+    position:relative;
+    z-index:2;
+}
+
+#evidence-section .panel-action{
+    display:flex;
+    align-items:center;
+    gap:7px;
+}
+
+#evidence-section .panel-action::before{
+    content:"";
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#6ca5ff;
+    box-shadow:0 0 10px rgba(108,165,255,.75);
+    animation:evidencePulse 2s ease-in-out infinite;
+}
+
+@keyframes evidencePulse{
+    0%,100%{
+        opacity:.45;
+        transform:scale(.8);
+    }
+    50%{
+        opacity:1;
+        transform:scale(1.15);
+    }
+}
+
+#evidence-section .events{
+    padding:5px 8px 10px;
+}
+
+#evidence-section .event-row{
+    position:relative;
+    display:grid;
+    grid-template-columns:110px minmax(0,1fr);
+    gap:18px;
+    padding:16px 16px;
+    border-bottom:1px solid rgba(112,140,180,.08);
+    background:
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.012),
+            transparent
+        );
+    transition:
+        transform .22s ease,
+        background .22s ease,
+        box-shadow .22s ease;
+}
+
+#evidence-section .event-row:last-child{
+    border-bottom:0;
+}
+
+#evidence-section .event-row:hover{
+    transform:translateX(3px);
+    background:
+        linear-gradient(
+            90deg,
+            rgba(70,112,180,.10),
+            rgba(70,112,180,.018)
+        );
+    box-shadow:
+        inset 2px 0 0 rgba(76,141,255,.65),
+        0 8px 22px rgba(0,0,0,.14);
+}
+
+#evidence-section .event-row::before{
+    content:"";
+    position:absolute;
+    left:0;
+    top:16px;
+    bottom:16px;
+    width:2px;
+    border-radius:4px;
+    background:linear-gradient(
+        to bottom,
+        #4d8cff,
+        rgba(77,140,255,.08)
+    );
+    opacity:.8;
+}
+
+#evidence-section .event-row > div:first-child{
+    display:flex;
+    align-items:flex-start;
+}
+
+#evidence-section .event-row strong{
+    display:inline-flex;
+    align-items:center;
+    min-height:27px;
+    padding:5px 9px;
+    border-radius:7px;
+    color:#bcd7ff;
+    background:rgba(67,112,184,.10);
+    border:1px solid rgba(91,142,219,.20);
+    font-size:10px;
+    letter-spacing:.04em;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+#evidence-section .event-row > div:last-child{
+    min-width:0;
+}
+
+#evidence-section .event-row > div:last-child > div:first-child{
+    color:#dce6f5;
+    font-size:11px;
+    line-height:1.55;
+    font-weight:500;
+}
+
+#evidence-section .muted{
+    margin-top:7px;
+    color:#687b98 !important;
+    font-size:9px !important;
+    line-height:1.6;
+    letter-spacing:.025em;
+}
+
+#evidence-section .muted::before{
+    content:"EVIDENCE PATH  ";
+    color:#4e6d94;
+    font-size:8px;
+    font-weight:700;
+    letter-spacing:.08em;
+}
+
+#evidence-section .event-row .muted:nth-of-type(2)::before{
+    content:"TYPE  ";
+}
+
+#evidence-section .event-row .muted:nth-of-type(3)::before{
+    content:"COLLECTED  ";
+}
+
+#evidence-section .empty{
+    min-height:150px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#61728c;
+    font-size:10px;
+    letter-spacing:.02em;
+}
+
+#evidence-section .empty::before{
+    content:"◈";
+    margin-right:9px;
+    color:#4d8cff;
+    font-size:15px;
+    opacity:.7;
+}
+
+/* forensic scan-line atmosphere */
+
+#evidence-section::after{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    top:-20%;
+    height:80px;
+    background:linear-gradient(
+        to bottom,
+        transparent,
+        rgba(92,151,255,.025),
+        transparent
+    );
+    pointer-events:none;
+    animation:evidenceScan 7s linear infinite;
+}
+
+@keyframes evidenceScan{
+    from{
+        transform:translateY(-20%);
+    }
+    to{
+        transform:translateY(160%);
+    }
+}
+
 /* EVENTS */
 
 .events{
