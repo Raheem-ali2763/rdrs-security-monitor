@@ -226,6 +226,19 @@ async function loadSettings() {
                     <div class="metric-value" style="font-size:20px">
                         ${settings.monitoring_enabled ? "ENABLED" : "DISABLED"}
                     </div>
+                    <div style="margin-top:10px">
+                        ${
+                            settings.monitoring_enabled
+                            ? `<button onclick="serviceAction('stop')"
+                                style="padding:7px 12px;border:1px solid #5a3038;border-radius:7px;background:#24151a;color:#e88a98;cursor:pointer">
+                                Stop Monitoring
+                              </button>`
+                            : `<button onclick="serviceAction('start')"
+                                style="padding:7px 12px;border:1px solid #28533f;border-radius:7px;background:#10251b;color:#69d99d;cursor:pointer">
+                                Start Monitoring
+                              </button>`
+                        }
+                    </div>
                 </div>
                 <div>
                     <div class="metric-label">MONITORED PATH</div>
@@ -286,6 +299,63 @@ async function loadReport() {
     } catch (error) {
         console.error("Report:", error);
         el.innerHTML = '<div class="empty">Unable to load report.</div>';
+    }
+}
+
+
+async function incidentAction(id, action) {
+    try {
+        const response = await fetch(`/api/incidents/${id}/${action}`, {
+            method: "POST"
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        await loadDashboard();
+        await loadReport();
+    } catch (error) {
+        console.error(`Incident ${action}:`, error);
+        alert(`Unable to ${action} incident.`);
+    }
+}
+
+async function deleteIncident(id) {
+    if (!confirm("Delete this incident?")) return;
+
+    try {
+        const response = await fetch(`/api/incidents/${id}`, {
+            method: "DELETE"
+        });
+
+        if (!response.ok && response.status !== 204) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        await loadDashboard();
+        await loadReport();
+    } catch (error) {
+        console.error("Delete incident:", error);
+        alert("Unable to delete incident.");
+    }
+}
+
+async function serviceAction(action) {
+    try {
+        const response = await fetch(`/api/service/${action}`, {
+            method: "POST"
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        await loadSettings();
+        await loadDashboard();
+    } catch (error) {
+        console.error(`Service ${action}:`, error);
+        alert(`Unable to ${action} monitoring service.`);
     }
 }
 
