@@ -919,6 +919,136 @@ body{
 }
 
 </style>
+
+<style id="rdrs-evidence-premium">
+/* ===== PREMIUM EVIDENCE SOC PANEL ===== */
+
+#evidence-section {
+    position: relative !important;
+    overflow: hidden !important;
+    margin-top: 28px !important;
+    border: 1px solid rgba(88,166,255,.16) !important;
+    border-radius: 18px !important;
+    background:
+        radial-gradient(circle at 92% 10%, rgba(70,130,255,.10), transparent 28%),
+        radial-gradient(circle at 8% 90%, rgba(0,220,180,.055), transparent 25%),
+        linear-gradient(145deg, rgba(15,24,42,.98), rgba(8,15,29,.98)) !important;
+    box-shadow:
+        0 18px 60px rgba(0,0,0,.28),
+        inset 0 1px 0 rgba(255,255,255,.035) !important;
+    transform: translateZ(0);
+}
+
+#evidence-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(90,170,255,.035) 48%,
+            rgba(90,170,255,.09) 50%,
+            rgba(90,170,255,.035) 52%,
+            transparent 100%
+        );
+    background-size: 220% 100%;
+    animation: evidenceScan 7s linear infinite;
+}
+
+#evidence-section::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(73,160,255,.75),
+        rgba(0,235,190,.55),
+        transparent
+    );
+    animation: evidenceLine 4s ease-in-out infinite;
+}
+
+#evidence-section .panel-header,
+#evidence-section .panel-title {
+    position: relative;
+    z-index: 2;
+}
+
+#evidence-section .panel-title {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    letter-spacing: .04em !important;
+    text-transform: uppercase !important;
+}
+
+#evidence-section .panel-subtitle,
+#evidence-section small {
+    opacity: .55;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+#evidence-section > div:not(.panel-header),
+#evidence-section .evidence-item {
+    position: relative;
+    z-index: 2;
+}
+
+#evidence-section .evidence-item {
+    margin: 10px 12px !important;
+    padding: 16px 18px !important;
+    border: 1px solid rgba(255,255,255,.055) !important;
+    border-radius: 12px !important;
+    background: linear-gradient(
+        135deg,
+        rgba(255,255,255,.025),
+        rgba(255,255,255,.008)
+    ) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
+    transition:
+        transform .25s ease,
+        border-color .25s ease,
+        box-shadow .25s ease,
+        background .25s ease;
+}
+
+#evidence-section .evidence-item:hover {
+    transform: translateY(-3px) translateX(2px);
+    border-color: rgba(74,158,255,.28) !important;
+    background: linear-gradient(
+        135deg,
+        rgba(55,120,220,.09),
+        rgba(255,255,255,.018)
+    ) !important;
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.22),
+        0 0 25px rgba(50,130,255,.055);
+}
+
+@keyframes evidenceScan {
+    0%   { background-position: 220% 0; }
+    100% { background-position: -220% 0; }
+}
+
+@keyframes evidenceLine {
+    0%,100% { opacity: .25; transform: scaleX(.35); }
+    50%     { opacity: 1; transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #evidence-section::before,
+    #evidence-section::after {
+        animation: none;
+    }
+}
+</style>
+
 </head>
 
 <body>
