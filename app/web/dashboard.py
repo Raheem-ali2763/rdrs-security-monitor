@@ -577,6 +577,347 @@ button:not([disabled]):hover{
     }
 }
 
+
+/* =========================================================
+   RDRS STEP 1 — 3D SHELL
+   Premium animated SOC environment
+   ========================================================= */
+
+:root{
+    --rdrs-blue:#4c8dff;
+    --rdrs-purple:#8b5cf6;
+    --rdrs-cyan:#22d3ee;
+    --rdrs-green:#34d399;
+}
+
+/* Deep spatial background */
+
+body{
+    overflow-x:hidden;
+    background:
+        radial-gradient(
+            circle at 78% 8%,
+            rgba(76,141,255,.13),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 35% 55%,
+            rgba(139,92,246,.065),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 92% 85%,
+            rgba(34,211,238,.045),
+            transparent 24%
+        ),
+        #060a13;
+}
+
+/* Animated ambient light */
+
+.app{
+    position:relative;
+    isolation:isolate;
+    perspective:1400px;
+}
+
+.app::before{
+    content:"";
+    position:fixed;
+    width:420px;
+    height:420px;
+    left:18%;
+    top:12%;
+    border-radius:50%;
+    background:
+        radial-gradient(
+            circle,
+            rgba(76,141,255,.075),
+            transparent 68%
+        );
+    filter:blur(35px);
+    animation:rdrsFloatOne 13s ease-in-out infinite alternate;
+    pointer-events:none;
+    z-index:-1;
+}
+
+.app::after{
+    content:"";
+    position:fixed;
+    width:360px;
+    height:360px;
+    right:4%;
+    bottom:8%;
+    border-radius:50%;
+    background:
+        radial-gradient(
+            circle,
+            rgba(139,92,246,.065),
+            transparent 68%
+        );
+    filter:blur(35px);
+    animation:rdrsFloatTwo 16s ease-in-out infinite alternate;
+    pointer-events:none;
+    z-index:-1;
+}
+
+@keyframes rdrsFloatOne{
+    0%{
+        transform:translate3d(-30px,-15px,0) scale(.92);
+        opacity:.45;
+    }
+    50%{
+        transform:translate3d(55px,35px,0) scale(1.08);
+        opacity:.8;
+    }
+    100%{
+        transform:translate3d(-10px,75px,0) scale(.98);
+        opacity:.55;
+    }
+}
+
+@keyframes rdrsFloatTwo{
+    0%{
+        transform:translate3d(20px,30px,0) scale(.9);
+        opacity:.35;
+    }
+    50%{
+        transform:translate3d(-50px,-35px,0) scale(1.12);
+        opacity:.7;
+    }
+    100%{
+        transform:translate3d(15px,-70px,0) scale(.96);
+        opacity:.45;
+    }
+}
+
+/* Subtle futuristic grid */
+
+.main{
+    position:relative;
+}
+
+.main::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    opacity:.18;
+    background-image:
+        linear-gradient(
+            rgba(100,130,180,.055) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(100,130,180,.055) 1px,
+            transparent 1px
+        );
+    background-size:48px 48px;
+    mask-image:linear-gradient(
+        to bottom,
+        black,
+        transparent 88%
+    );
+}
+
+/* Sidebar depth */
+
+.sidebar{
+    position:sticky;
+    z-index:10;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(10,17,31,.97),
+            rgba(6,11,21,.97)
+        );
+    box-shadow:
+        18px 0 50px rgba(0,0,0,.20),
+        inset -1px 0 rgba(91,120,170,.08);
+}
+
+/* Animated sidebar edge */
+
+.sidebar::after{
+    content:"";
+    position:absolute;
+    right:-1px;
+    top:8%;
+    width:1px;
+    height:84%;
+    background:
+        linear-gradient(
+            to bottom,
+            transparent,
+            rgba(76,141,255,.5),
+            rgba(139,92,246,.35),
+            transparent
+        );
+    opacity:.65;
+    animation:rdrsEdgePulse 4s ease-in-out infinite;
+}
+
+@keyframes rdrsEdgePulse{
+    0%,100%{opacity:.25}
+    50%{opacity:.85}
+}
+
+/* Brand */
+
+.brand{
+    position:relative;
+}
+
+.brand-icon{
+    position:relative;
+    transform:translateZ(0);
+    transition:
+        transform .35s cubic-bezier(.2,.8,.2,1),
+        box-shadow .35s ease;
+}
+
+.brand-icon::after{
+    content:"";
+    position:absolute;
+    inset:-5px;
+    border-radius:15px;
+    border:1px solid rgba(76,141,255,.16);
+    box-shadow:
+        0 0 20px rgba(76,141,255,.10);
+    animation:rdrsBrandPulse 3.5s ease-in-out infinite;
+}
+
+.brand:hover .brand-icon{
+    transform:
+        translateY(-2px)
+        rotateX(5deg)
+        rotateY(-5deg);
+    box-shadow:
+        0 10px 30px rgba(76,141,255,.20),
+        0 0 25px rgba(139,92,246,.12);
+}
+
+@keyframes rdrsBrandPulse{
+    0%,100%{
+        opacity:.35;
+        transform:scale(.98);
+    }
+    50%{
+        opacity:.9;
+        transform:scale(1.05);
+    }
+}
+
+/* Navigation depth */
+
+.nav-item{
+    transform:translateZ(0);
+    transform-style:preserve-3d;
+    will-change:transform;
+}
+
+.nav-item:hover{
+    transform:
+        translate3d(4px,-1px,8px);
+    box-shadow:
+        8px 8px 25px rgba(0,0,0,.16);
+}
+
+.nav-item.active{
+    box-shadow:
+        inset 3px 0 var(--rdrs-blue),
+        8px 8px 28px rgba(0,0,0,.14),
+        0 0 22px rgba(76,141,255,.055);
+}
+
+/* Header depth */
+
+.topbar{
+    position:relative;
+    z-index:2;
+}
+
+.topbar h1{
+    text-shadow:
+        0 2px 25px rgba(76,141,255,.10);
+}
+
+.eyebrow{
+    text-shadow:
+        0 0 16px rgba(76,141,255,.18);
+}
+
+/* Live status */
+
+.status{
+    position:relative;
+    overflow:hidden;
+}
+
+.status::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        linear-gradient(
+            110deg,
+            transparent 20%,
+            rgba(255,255,255,.09) 48%,
+            transparent 70%
+        );
+    transform:translateX(-120%);
+    animation:rdrsStatusSweep 4.5s ease-in-out infinite;
+}
+
+@keyframes rdrsStatusSweep{
+    0%,45%{
+        transform:translateX(-120%);
+    }
+    65%,100%{
+        transform:translateX(120%);
+    }
+}
+
+.status-dot{
+    box-shadow:
+        0 0 7px rgba(52,211,153,.75),
+        0 0 15px rgba(52,211,153,.35);
+    animation:rdrsLiveDot 1.8s ease-in-out infinite;
+}
+
+@keyframes rdrsLiveDot{
+    0%,100%{
+        transform:scale(1);
+        opacity:1;
+    }
+    50%{
+        transform:scale(1.45);
+        opacity:.65;
+    }
+}
+
+/* Smooth rendering */
+
+.card,
+.nav-item,
+.status{
+    backface-visibility:hidden;
+    -webkit-font-smoothing:antialiased;
+}
+
+/* Respect reduced-motion accessibility */
+
+@media(prefers-reduced-motion:reduce){
+    *,
+    *::before,
+    *::after{
+        animation-duration:.01ms !important;
+        animation-iteration-count:1 !important;
+        transition-duration:.01ms !important;
+    }
+}
+
 </style>
 </head>
 
