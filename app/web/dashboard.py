@@ -2652,37 +2652,87 @@ async function loadSettings() {
         const settings = await response.json();
 
         const html = `
-            <div class="settings-row">
-                <div>
-                    <div class="metric-label">MONITORING</div>
-                    <div class="metric-value" style="font-size:20px">
-                        ${settings.monitoring_enabled ? "ENABLED" : "DISABLED"}
-                    </div>
-                    <div style="margin-top:10px">
+            <div class="settings-grid">
+
+                <div class="settings-card">
+                    <div class="settings-label">Monitoring Status</div>
+
+                    <div class="settings-control">
+                        <div>
+                            <div class="settings-value">
+                                ${settings.monitoring_enabled ? "Active" : "Offline"}
+                            </div>
+
+                            <div style="margin-top:13px">
+                                <span class="settings-status ${settings.monitoring_enabled ? "" : "off"}">
+                                    <span class="settings-status-dot"></span>
+                                    ${settings.monitoring_enabled
+                                        ? "SYSTEM MONITORING"
+                                        : "MONITORING STOPPED"}
+                                </span>
+                            </div>
+                        </div>
+
                         ${
                             settings.monitoring_enabled
-                            ? `<button onclick="serviceAction('stop')"
-                                style="padding:7px 12px;border:1px solid #5a3038;border-radius:7px;background:#24151a;color:#e88a98;cursor:pointer">
+                            ? `<button class="settings-btn stop"
+                                onclick="serviceAction('stop')">
                                 Stop Monitoring
                               </button>`
-                            : `<button onclick="serviceAction('start')"
-                                style="padding:7px 12px;border:1px solid #28533f;border-radius:7px;background:#10251b;color:#69d99d;cursor:pointer">
+                            : `<button class="settings-btn start"
+                                onclick="serviceAction('start')">
                                 Start Monitoring
                               </button>`
                         }
                     </div>
+
+                    <div class="settings-description">
+                        Real-time file activity detection and threat analysis.
+                    </div>
                 </div>
-                <div>
-                    <div class="metric-label">MONITORED PATH</div>
-                    <div>${settings.monitored_path}</div>
+
+                <div class="settings-card">
+                    <div class="settings-label">Monitored Path</div>
+
+                    <div class="settings-value">
+                        Protected Workspace
+                    </div>
+
+                    <div class="settings-path">
+                        ${settings.monitored_path}
+                    </div>
+
+                    <div class="settings-description">
+                        Files created, modified, or removed inside this location
+                        are inspected by the detection pipeline.
+                    </div>
                 </div>
-                <div>
-                    <div class="metric-label">ENTROPY THRESHOLD</div>
-                    <div>${settings.entropy_threshold}</div>
+
+                <div class="settings-card full">
+                    <div class="settings-label">Detection Engine</div>
+
+                    <div class="settings-control">
+                        <div>
+                            <div class="settings-value">
+                                RDRS Detection Pipeline
+                            </div>
+
+                            <div class="settings-description">
+                                Entropy analysis, event processing and incident
+                                generation are operating through the active
+                                monitoring service.
+                            </div>
+                        </div>
+
+                        <span class="settings-status">
+                            <span class="settings-status-dot"></span>
+                            OPERATIONAL
+                        </span>
+                    </div>
                 </div>
+
             </div>
-        `;
-        el.innerHTML = html;
+        `;        el.innerHTML = html;
         if (el2) el2.innerHTML = html;
     } catch (error) {
         console.error("Settings:", error);
