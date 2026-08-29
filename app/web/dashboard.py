@@ -520,6 +520,205 @@ h1{
     letter-spacing:.04em;
 }
 
+
+/* PREMIUM RECENT EVENTS */
+
+#events-section{
+    position:relative;
+    overflow:hidden;
+    background:
+        radial-gradient(
+            circle at 90% 0%,
+            rgba(77,120,181,.10),
+            transparent 42%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(16,27,48,.98),
+            rgba(8,15,29,.98)
+        );
+}
+
+#events-section::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:1px;
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(77,141,255,.65),
+        transparent
+    );
+    opacity:.7;
+}
+
+#events-section .panel-header{
+    position:relative;
+    z-index:2;
+}
+
+#events-section .panel-action{
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+#events-section .panel-action::before{
+    content:"";
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#55d6a5;
+    box-shadow:0 0 10px rgba(85,214,165,.8);
+    animation:eventLivePulse 1.8s ease-in-out infinite;
+}
+
+@keyframes eventLivePulse{
+    0%,100%{
+        opacity:.45;
+        transform:scale(.85);
+    }
+    50%{
+        opacity:1;
+        transform:scale(1.15);
+    }
+}
+
+#events-section .events{
+    padding:4px 8px 8px;
+}
+
+#events-section .event{
+    position:relative;
+    margin:0;
+    padding:11px 10px 11px 14px;
+    border-bottom:1px solid rgba(112,140,180,.08);
+    background:rgba(255,255,255,.008);
+    transition:
+        transform .22s ease,
+        background .22s ease,
+        box-shadow .22s ease;
+}
+
+#events-section .event:last-child{
+    border-bottom:0;
+}
+
+#events-section .event:hover{
+    transform:translateX(3px);
+    background:rgba(65,105,170,.09);
+    box-shadow:
+        inset 2px 0 0 rgba(76,141,255,.8),
+        0 8px 22px rgba(0,0,0,.14);
+}
+
+#events-section .event::before{
+    content:"";
+    position:absolute;
+    left:0;
+    top:50%;
+    width:2px;
+    height:28px;
+    transform:translateY(-50%);
+    border-radius:3px;
+    background:rgba(76,141,255,.55);
+}
+
+#events-section .event:has(.severity.critical)::before{
+    background:#ef5368;
+    box-shadow:0 0 10px rgba(239,83,104,.45);
+}
+
+#events-section .event-icon{
+    width:25px;
+    height:25px;
+    min-width:25px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:8px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(57,84,126,.45),
+            rgba(20,34,58,.75)
+        );
+    border:1px solid rgba(107,139,184,.18);
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.05),
+        0 4px 12px rgba(0,0,0,.18);
+}
+
+#events-section .event-info{
+    min-width:0;
+}
+
+#events-section .event-name{
+    font-size:11px;
+    font-weight:600;
+    color:#dce7f7;
+    letter-spacing:.01em;
+    text-transform:capitalize;
+}
+
+#events-section .event-path{
+    margin-top:3px;
+    max-width:250px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:9px;
+    color:#657793;
+}
+
+#events-section .severity{
+    padding:4px 8px;
+    border-radius:999px;
+    font-size:8px;
+    font-weight:700;
+    letter-spacing:.08em;
+    border:1px solid rgba(255,255,255,.08);
+    transition:.2s ease;
+}
+
+#events-section .severity.critical{
+    color:#ff7185;
+    background:rgba(157,42,63,.13);
+    border-color:rgba(239,83,104,.28);
+    box-shadow:
+        inset 0 0 12px rgba(239,83,104,.04),
+        0 0 10px rgba(239,83,104,.05);
+}
+
+#events-section .severity.warning{
+    color:#e8b967;
+    background:rgba(170,118,35,.10);
+    border-color:rgba(232,185,103,.25);
+}
+
+#events-section .severity.normal{
+    color:#63d8a6;
+    background:rgba(48,145,104,.10);
+    border-color:rgba(99,216,166,.22);
+}
+
+#events-section .event:hover .severity.critical{
+    box-shadow:
+        0 0 14px rgba(239,83,104,.16),
+        inset 0 0 10px rgba(239,83,104,.05);
+}
+
+#events-section .empty{
+    min-height:120px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#62728b;
+}
+
 /* EVENTS */
 
 .events{
