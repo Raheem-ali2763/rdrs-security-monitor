@@ -1920,6 +1920,160 @@ button:not([disabled]):hover{
     }
 }
 
+
+/* =========================================================
+   PREMIUM SYSTEM SETTINGS
+   ========================================================= */
+
+.settings-premium {
+    position: relative;
+    overflow: hidden;
+    margin-top: 30px !important;
+    border: 1px solid rgba(100,145,210,.18);
+    background:
+        radial-gradient(circle at 90% 0%, rgba(70,125,220,.10), transparent 32%),
+        radial-gradient(circle at 5% 100%, rgba(60,180,150,.055), transparent 28%),
+        linear-gradient(145deg, rgba(15,23,38,.98), rgba(9,15,27,.98));
+    box-shadow:
+        0 18px 55px rgba(0,0,0,.28),
+        inset 0 1px rgba(255,255,255,.035);
+}
+
+.settings-premium::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(115deg,
+            transparent 0%,
+            rgba(120,180,255,.035) 45%,
+            transparent 70%);
+    transform: translateX(-100%);
+    animation: settingsSweep 7s ease-in-out infinite;
+}
+
+.settings-header {
+    position: relative;
+    padding: 22px 24px !important;
+    min-height: 72px;
+}
+
+.settings-subtitle {
+    margin-top: 7px;
+    color: #70819d;
+    font-size: 11px;
+    letter-spacing: .045em;
+}
+
+.settings-live {
+    padding: 7px 11px;
+    border: 1px solid rgba(75,210,155,.18);
+    border-radius: 999px;
+    background: rgba(45,160,115,.07);
+    color: #72dca9;
+    box-shadow: 0 0 18px rgba(55,205,145,.06);
+}
+
+.settings-content {
+    padding: 10px 24px 30px !important;
+}
+
+.settings-content .settings-row {
+    display: grid !important;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 18px;
+    padding: 0 !important;
+}
+
+.settings-content .settings-row > div {
+    position: relative;
+    min-height: 128px;
+    padding: 24px 22px;
+    border: 1px solid rgba(110,145,195,.13);
+    border-radius: 14px;
+    background:
+        linear-gradient(145deg,
+            rgba(23,34,54,.82),
+            rgba(13,21,35,.72));
+    box-shadow:
+        inset 0 1px rgba(255,255,255,.025),
+        0 12px 30px rgba(0,0,0,.12);
+    transition:
+        transform .25s ease,
+        border-color .25s ease,
+        box-shadow .25s ease;
+}
+
+.settings-content .settings-row > div:hover {
+    transform: translateY(-2px);
+    border-color: rgba(100,165,235,.28);
+    box-shadow:
+        0 16px 38px rgba(0,0,0,.2),
+        0 0 25px rgba(65,135,230,.055);
+}
+
+.settings-content .metric-label {
+    margin-bottom: 10px;
+    color: #72839f;
+    font-size: 10px;
+    letter-spacing: .12em;
+}
+
+.settings-content .metric-value {
+    color: #edf4ff;
+    font-weight: 600;
+    letter-spacing: -.02em;
+}
+
+.settings-content button {
+    margin-top: 15px !important;
+    min-width: 150px;
+    padding: 10px 15px !important;
+    border-radius: 9px !important;
+    font-weight: 600;
+    letter-spacing: .01em;
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        filter .2s ease;
+}
+
+.settings-content button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.12);
+}
+
+@keyframes settingsSweep {
+    0%, 65%, 100% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    72% {
+        opacity: 1;
+    }
+    88% {
+        transform: translateX(100%);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 760px) {
+    .settings-content .settings-row {
+        grid-template-columns: 1fr;
+    }
+
+    .settings-content {
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
+
+    .settings-header {
+        padding-left: 18px !important;
+        padding-right: 18px !important;
+    }
+}
+
 </style>
 
 <style id="rdrs-evidence-premium">
@@ -2559,12 +2713,15 @@ button:not([disabled]):hover{
 </div>
 </section>
 
-<section class="card panel" id="settings-section" style="margin-top:20px">
-<div class="panel-header">
-<span class="panel-title">System Settings</span>
-    <span class="panel-action">CONFIGURATION</span>
+<section class="card panel settings-premium" id="settings-section" style="margin-top:28px">
+<div class="panel-header settings-header">
+<div>
+        <span class="panel-title">System Settings</span>
+        <div class="settings-subtitle">RDRS protection and monitoring controls</div>
+    </div>
+    <span class="panel-action settings-live">● SYSTEM ONLINE</span>
 </div>
-<div id="settings" class="events">
+<div id="settings" class="settings-content">
     <div class="empty">Loading settings...</div>
 </div>
 </section>
