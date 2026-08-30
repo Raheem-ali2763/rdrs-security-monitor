@@ -1,3 +1,5 @@
+[![RDRS CI](https://github.com/Raheem-ali2763/rdrs-security-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/Raheem-ali2763/rdrs-security-monitor/actions/workflows/ci.yml)
+
 # RDRS — Security Monitoring & Incident Detection Platform
 
 RDRS is a Python-based security monitoring and incident detection platform designed to monitor filesystem activity, identify suspicious behavior, calculate threat scores, create security incidents, collect evidence, and provide a web dashboard for security monitoring.
