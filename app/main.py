@@ -1,3 +1,5 @@
+import os
+from contextlib import asynccontextmanager
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -17,9 +19,13 @@ service = RDRSService(paths=["data/sandbox"])
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    service.start()
+    if not os.getenv("VERCEL"):
+        service.start()
+
     yield
-    service.stop()
+
+    if not os.getenv("VERCEL"):
+        service.stop()
 
 
 app = FastAPI(

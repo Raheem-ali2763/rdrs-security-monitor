@@ -34,3 +34,4 @@ logs/*
 # Generated reports
 data/reports/*
 !data/reports/.gitkeep
+.vercel
