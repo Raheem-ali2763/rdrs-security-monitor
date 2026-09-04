@@ -24,3 +24,27 @@ dashboard for security monitoring.
 - Configurable detection thresholds
 - Linux systemd deployment
 
+## Current RDRS Features
+
+- File-system monitoring with Watchdog
+- Shannon entropy analysis using 64 KB samples
+- Sliding-window ransomware activity detection
+- Rapid file modification detection
+- Mass rename detection
+- High-entropy detection
+- Process telemetry using psutil
+- CPU and memory telemetry
+- Process executable and parent-process tracking
+- Detection scoring with configurable thresholds
+- Normal / Warning / Critical severity levels
+- Incident persistence using SQLite
+- Evidence tracking and quarantine copying
+- Safe file scanner with SHA-256 analysis
+- Suspicious-extension and ransomware-keyword indicators
+- Scanner upload endpoint
+- Scanner incoming/quarantine storage visibility
+- Incident and event REST APIs
+- JSON and CSV reporting
+- Dashboard File Scanner navigation
+- Dashboard scanner storage visibility
+- Simulation/safe-response architecture
