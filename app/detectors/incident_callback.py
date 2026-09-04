@@ -25,6 +25,57 @@ def persist_detection(
 ) -> None:
     session = get_session()
 
+def persist_scan_incident(result: dict) -> None:
+    """Persist a Critical file-scan result as an RDRS incident."""
+    session = get_session()
+
+    try:
+        if result.get("severity") != "Critical":
+            return
+
+        sha256 = result.get("sha256")
+
+        existing = None
+        if sha256:
+            existing = (
+                session.query(Evidence)
+                .filter(Evidence.sha256 == sha256)
+                .first()
+            )
+
+        if existing:
+            return
+
+        incident = Incident(
+            incident_id=f"INC-SCAN-{datetime.utcnow().strftime('%Y%m%d%H%M%S%f')}",
+            severity="critical",
+            threat_score=float(result.get("score", 0)),
+            status="open",
+            summary=(
+                f"Critical file scan detected suspicious file: "
+                f"{result.get('filename')}"
+            ),
+        )
+
+        session.add(incident)
+        session.flush()
+
+        evidence = Evidence(
+            incident_id=incident.id,
+            path=result.get("path", ""),
+            evidence_type="scanner",
+            sha256=result.get("sha256"),
+        )
+
+        session.add(evidence)
+        session.commit()
+
+    except Exception:
+        session.rollback()
+        raise
+    finally:
+        session.close()
+
     try:
         event_repo = EventRepository(session)
 

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RDRS File Scanner</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0b1020;
+            color: #f5f7ff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 60px auto;
+            padding: 30px;
+        }
+
+        .card {
+            background: #151c31;
+            border: 1px solid #2a3555;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,.35);
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        .subtitle {
+            color: #9da8c5;
+            margin-bottom: 30px;
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 18px;
+            box-sizing: border-box;
+            background: #0f1628;
+            color: white;
+            border: 1px dashed #435071;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border: 0;
+            border-radius: 12px;
+            background: #2563eb;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: .6;
+            cursor: wait;
+        }
+
+        #result {
+            margin-top: 25px;
+            white-space: pre-wrap;
+            background: #0a0f1d;
+            border-radius: 12px;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #8fb4ff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a class="back" href="/">← Back to Dashboard</a>
+
+        <div class="card">
+            <h1>RDRS File Scanner</h1>
+
+            <p class="subtitle">
+                Upload a file for defensive static analysis, threat scoring,
+                incident detection and quarantine handling.
+            </p>
+
+            <input id="fileInput" type="file">
+
+            <button id="scanButton" onclick="scanFile()">
+                Scan File
+            </button>
+
+            <div id="result">Select a file and start a scan.</div>
+        </div>
+    </div>
+
+    <script>
+        async function scanFile() {
+            const input = document.getElementById("fileInput");
+            const button = document.getElementById("scanButton");
+            const result = document.getElementById("result");
+
+            if (!input.files.length) {
+                result.textContent = "Please select a file first.";
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", input.files[0]);
+
+            button.disabled = true;
+            button.textContent = "Scanning...";
+            result.textContent = "Analyzing file...";
+
+            try {
+                const response = await fetch("/api/scan", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                result.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                result.textContent = "Scan failed: " + error;
+            } finally {
+                button.disabled = false;
+                button.textContent = "Scan File";
+            }
+        }
+    </script>
+</body>
+</html>

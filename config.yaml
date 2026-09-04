@@ -43,3 +43,9 @@ logging:
   directory: "./logs"
   rotation: "10 MB"
   retention: "7 days"
+
+scanner:
+  incoming_directory: "./data/scanner/incoming"
+  quarantine_directory: "./data/quarantine/incidents"
+  max_file_size_mb: 50
+  entropy_sample_bytes: 65536

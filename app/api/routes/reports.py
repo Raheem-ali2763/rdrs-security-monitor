@@ -8,7 +8,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 
 from app.database.incident_models import Incident
-from app.database.models import Event
+from app.database.models import Event, ProcessSnapshot
 from app.database.session import get_session
 
 
@@ -75,27 +75,29 @@ def _recommendations(incident: Incident) -> list[str]:
 def _build_report(session, incident: Incident) -> dict:
     evidence = list(incident.evidence or [])
 
-    events = session.query(Event).all()
+    events = (
+        session.query(Event)
+        .order_by(Event.timestamp.asc())
+        .all()
+    )
 
-    event_rows = []
+    processes = (
+        session.query(ProcessSnapshot)
+        .order_by(ProcessSnapshot.timestamp.asc())
+        .all()
+    )
+
+    event_rows = [_model_dict(event) for event in events]
+    process_rows = [_model_dict(process) for process in processes]
+
     suspect_processes = set()
 
-    for event in events:
-        row = _model_dict(event)
+    for process in processes:
+        if process.name:
+            suspect_processes.add(process.name)
 
-        # Keep only useful timeline information when possible.
-        event_rows.append(row)
-
-        for key in (
-            "process",
-            "process_name",
-            "process_path",
-            "executable",
-            "source_process",
-        ):
-            value = row.get(key)
-            if value:
-                suspect_processes.add(str(value))
+        if process.executable:
+            suspect_processes.add(process.executable)
 
     affected_files = []
     evidence_rows = []
@@ -106,6 +108,10 @@ def _build_report(session, incident: Incident) -> dict:
 
         if item.path:
             affected_files.append(item.path)
+
+    for event in events:
+        if event.suspicious and event.path:
+            affected_files.append(event.path)
 
     timeline = [
         {
@@ -118,6 +124,19 @@ def _build_report(session, incident: Incident) -> dict:
             "description": incident.summary,
         }
     ]
+
+    for event in events:
+        timeline.append(
+            {
+                "type": f"file_{event.event_type}",
+                "timestamp": (
+                    event.timestamp.isoformat()
+                    if event.timestamp
+                    else None
+                ),
+                "description": event.path,
+            }
+        )
 
     if incident.ended_at:
         timeline.append(
@@ -137,6 +156,7 @@ def _build_report(session, incident: Incident) -> dict:
         "summary": incident.summary,
         "affected_files": sorted(set(affected_files)),
         "suspect_processes": sorted(suspect_processes),
+        "process_snapshots": process_rows,
         "evidence": evidence_rows,
         "events": event_rows,
         "recommendations": _recommendations(incident),
@@ -151,15 +171,30 @@ def report_summary() -> dict:
     try:
         incidents = session.query(Incident).all()
         events = session.query(Event).all()
+        processes = session.query(ProcessSnapshot).all()
 
         open_incidents = sum(
-            1 for incident in incidents
+            1
+            for incident in incidents
             if incident.status == "open"
         )
 
         suspicious_events = sum(
-            1 for event in events
+            1
+            for event in events
             if event.suspicious
+        )
+
+        cpu_spikes = sum(
+            1
+            for process in processes
+            if process.cpu_percent >= 80
+        )
+
+        unknown_processes = sum(
+            1
+            for process in processes
+            if process.unknown_process
         )
 
         return {
@@ -168,9 +203,13 @@ def report_summary() -> dict:
             "total_incidents": len(incidents),
             "open_incidents": open_incidents,
             "resolved_incidents": sum(
-                1 for incident in incidents
+                1
+                for incident in incidents
                 if incident.status in {"resolved", "closed"}
             ),
+            "process_snapshots": len(processes),
+            "cpu_spikes": cpu_spikes,
+            "unknown_process_snapshots": unknown_processes,
         }
 
     finally:
@@ -247,8 +286,43 @@ def _report_to_csv(report: dict) -> str:
         writer.writerow([process])
 
     writer.writerow([])
+    writer.writerow(["PROCESS SNAPSHOTS"])
+    writer.writerow([
+        "PID",
+        "Name",
+        "CPU %",
+        "Memory %",
+        "Disk Writes",
+        "Executable",
+        "Parent PID",
+        "Parent Name",
+        "Unknown",
+        "Timestamp",
+    ])
+
+    for process in report["process_snapshots"]:
+        writer.writerow([
+            process.get("pid"),
+            process.get("name"),
+            process.get("cpu_percent"),
+            process.get("memory_percent"),
+            process.get("disk_write_bytes"),
+            process.get("executable"),
+            process.get("parent_pid"),
+            process.get("parent_name"),
+            process.get("unknown_process"),
+            process.get("timestamp"),
+        ])
+
+    writer.writerow([])
     writer.writerow(["EVIDENCE"])
-    writer.writerow(["ID", "Path", "Type", "SHA256", "Collected At"])
+    writer.writerow([
+        "ID",
+        "Path",
+        "Type",
+        "SHA256",
+        "Collected At",
+    ])
 
     for item in report["evidence"]:
         writer.writerow([
@@ -282,7 +356,6 @@ def generate_csv_report(incident_ref: str):
             )
 
         report = _build_report(session, incident)
-
 
         filename = f"{incident.incident_id}.csv"
         path = REPORT_DIR / filename

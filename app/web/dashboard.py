@@ -2611,6 +2611,7 @@ button:not([disabled]):hover{
 <a class="nav-item" href="#evidence-section" onclick="document.getElementById('evidence-section').scrollIntoView({behavior:'smooth',block:'start'}); return false;"><span class="nav-icon">◈</span>Evidence</a>
 
 <div class="nav-title">Manage</div>
+<a class="nav-item" href="/scanner"><span class="nav-icon">⌕</span>File Scanner</a>
 <a class="nav-item" href="#report-section"><span class="nav-icon">▣</span>Reports</a>
 <a class="nav-item" href="#settings-section" onclick="document.getElementById('settings-section').scrollIntoView({behavior:'smooth',block:'start'}); return false;"><span class="nav-icon">⚙</span>Settings</a>
 

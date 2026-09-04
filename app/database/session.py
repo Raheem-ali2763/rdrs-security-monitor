@@ -28,3 +28,15 @@ SessionLocal = sessionmaker(
 def get_session() -> Session:
     """Create and return a new database session."""
     return SessionLocal()
+
+
+def init_db() -> None:
+    """Create all RDRS database tables that do not already exist."""
+    from app.database.models import Base
+    from app.database.incident_models import Evidence, Incident
+    from app.database.models import ProcessSnapshot
+
+    # Keep model imports explicit so SQLAlchemy registers all tables.
+    _ = (Evidence, Incident, ProcessSnapshot)
+
+    Base.metadata.create_all(bind=engine)
