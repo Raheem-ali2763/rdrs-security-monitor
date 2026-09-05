@@ -54,6 +54,16 @@ class DetectionPipeline:
 
         entropy = None
 
+        # Deleted files must not be analyzed even if the test event
+        # still points to a path that exists on disk.
+        if event.event_type == "delete":
+            snapshot = self.activity_window.add(
+                event,
+                entropy=None,
+            )
+            self.last_snapshot = snapshot
+            return None
+
         if event.path.is_file():
             try:
                 result = self.engine.analyze(event.path)
