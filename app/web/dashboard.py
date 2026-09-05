@@ -3230,56 +3230,65 @@ async function downloadIncidentReport(incidentRef, format) {
 async function loadDashboard() {
     try {
         const [statsRes, eventsRes, incidentsRes] = await Promise.all([
-            fetch("/api/stats"),
-            fetch("/api/events?limit=6"),
-            fetch("/api/incidents")
+            fetch("/api/stats", { cache: "no-store" }),
+            fetch("/api/events?limit=6", { cache: "no-store" }),
+            fetch("/api/incidents", { cache: "no-store" })
         ]);
 
         if (!statsRes.ok || !eventsRes.ok || !incidentsRes.ok) {
-            throw new Error("API unavailable");
+            throw new Error("Dashboard API unavailable");
         }
 
         const stats = await statsRes.json();
         const events = await eventsRes.json();
         const incidents = await incidentsRes.json();
 
-        const total = stats.total_events || 0;
-        const suspicious = stats.suspicious_events || 0;
-        const recent = stats.recent_events || 0;
-
-        const maxThreatScore = incidents.length
-            ? Math.max(...incidents.map(i => Number(i.threat_score) || 0))
-            : 0;
-
-        const score = Math.min(
-            100,
-            Math.round(Math.max(maxThreatScore, suspicious * 20 + Math.min(total, 20)))
-        );
+        /* -----------------------------
+           LIVE TOP METRICS
+        ----------------------------- */
 
         const threatScore = document.getElementById("threat-score");
         const eventCount = document.getElementById("event-count");
         const suspiciousCount = document.getElementById("suspicious-count");
         const recentCount = document.getElementById("recent-count");
 
-        if (threatScore) threatScore.textContent = score;
-        if (eventCount) eventCount.textContent = total;
-        if (suspiciousCount) suspiciousCount.textContent = suspicious;
-        if (recentCount) recentCount.textContent = recent;
+        if (threatScore) {
+            threatScore.textContent =
+                Math.round(Number(stats.threat_score || 0));
+        }
+
+        if (eventCount) {
+            eventCount.textContent =
+                Number(stats.events_today ?? stats.total_events ?? 0);
+        }
+
+        if (suspiciousCount) {
+            suspiciousCount.textContent =
+                Number(stats.suspicious_events || 0);
+        }
+
+        if (recentCount) {
+            recentCount.textContent =
+                Number(stats.recent_events || 0);
+        }
 
         const threatLabel = document.getElementById("threat-label");
+
         if (threatLabel) {
             threatLabel.textContent =
-                score >= 70 ? "Elevated activity" :
-                score >= 40 ? "Moderate activity" :
-                "Low activity";
+                stats.threat_label || "No active threat";
         }
+
+        /* -----------------------------
+           LIVE RECENT EVENTS
+        ----------------------------- */
 
         const eventContainer = document.getElementById("events");
 
         if (eventContainer) {
             if (!events.length) {
                 eventContainer.innerHTML =
-                    '<div class="empty">No events recorded yet.</div>';
+                    '<div class="empty">No recent events.</div>';
             } else {
                 eventContainer.innerHTML = events.map(event => {
                     const severity = event.suspicious
@@ -3313,46 +3322,58 @@ async function loadDashboard() {
             }
         }
 
+        /* -----------------------------
+           LIVE ACTIVE INCIDENTS
+        ----------------------------- */
+
         const incidentContainer = document.getElementById("incidents");
 
-    const activeIncidents = incidents.filter(
-        incident => incident.status === "open"
-    );
+        const activeIncidents = incidents.filter(
+            incident =>
+                String(incident.status || "").toLowerCase() === "open"
+        );
 
-    if (!activeIncidents.length) {
-        incidentContainer.innerHTML =
-            '';
-    } else {
-        incidentContainer.innerHTML = activeIncidents.map(incident => `
-            <div class="event-row">
-                <div style="flex:1">
-                    <strong>${incident.incident_id}</strong>
-                    <span> — ${incident.summary}</span>
-                    <div class="muted">
-                        Threat score: ${Number(incident.threat_score || 0).toFixed(1)}
+        if (incidentContainer) {
+            if (!activeIncidents.length) {
+                incidentContainer.innerHTML =
+                    '<div class="empty">No active incidents.</div>';
+            } else {
+                incidentContainer.innerHTML = activeIncidents.map(incident => `
+                    <div class="event-row">
+                        <div style="flex:1">
+                            <strong>${incident.incident_id}</strong>
+                            <span> — ${incident.summary}</span>
+                            <div class="muted">
+                                Threat score:
+                                ${Number(incident.threat_score || 0).toFixed(1)}
+                            </div>
+                        </div>
+
+                        <div style="display:flex;align-items:center;gap:8px">
+                            <span class="severity ${String(
+                                incident.severity || ""
+                            ).toLowerCase()}">
+                                ${String(
+                                    incident.severity || ""
+                                ).toUpperCase()}
+                            </span>
+
+                            <button
+                                onclick="incidentAction(${incident.id}, 'resolve')"
+                                style="padding:5px 9px;border:1px solid #28533f;border-radius:6px;background:#10251b;color:#69d99d;cursor:pointer">
+                                Resolve
+                            </button>
+
+                            <button
+                                onclick="deleteIncident(${incident.id})"
+                                style="padding:5px 9px;border:1px solid #5a3038;border-radius:6px;background:#24151a;color:#e88a98;cursor:pointer">
+                                Delete
+                            </button>
+                        </div>
                     </div>
-                </div>
-
-                <div style="display:flex;align-items:center;gap:8px">
-                    <span class="severity ${String(incident.severity || "").toLowerCase()}">
-                        ${String(incident.severity || "").toUpperCase()}
-                    </span>
-
-                    <button
-                        onclick="incidentAction(${incident.id}, 'resolve')"
-                        style="padding:5px 9px;border:1px solid #28533f;border-radius:6px;background:#10251b;color:#69d99d;cursor:pointer">
-                        Resolve
-                    </button>
-
-                    <button
-                        onclick="deleteIncident(${incident.id})"
-                        style="padding:5px 9px;border:1px solid #5a3038;border-radius:6px;background:#24151a;color:#e88a98;cursor:pointer">
-                        Delete
-                    </button>
-                </div>
-            </div>
-        `).join("");
-    }
+                `).join("");
+            }
+        }
 
     } catch (error) {
         console.error("RDRS dashboard error:", error);
@@ -3362,12 +3383,12 @@ async function loadDashboard() {
 
         if (events) {
             events.innerHTML =
-                '<div class="empty">Unable to load events.</div>';
+                '<div class="empty">Unable to load live events.</div>';
         }
 
         if (incidents) {
             incidents.innerHTML =
-                '<div class="empty">Unable to load incidents.</div>';
+                '<div class="empty">Unable to load live incidents.</div>';
         }
     }
 }
